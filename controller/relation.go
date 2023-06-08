@@ -10,11 +10,13 @@ type UserListResponse struct {
 	UserList []User `json:"user_list"`
 }
 
-// RelationAction no practical effect, just check if token is valid
+// RelationAction 点击关注按钮，添加到follow数据库和被关注人的follower数据库
 func RelationAction(c *gin.Context) {
-	token := c.Query("token")
+	token := c.Query("token")           // 当前用户的token
+	to_user_id := c.Query("to_user_id") // 被关注人id
 
-	if _, exist := usersLoginInfo[token]; exist {
+	if user, exist := usersLoginInfo[token]; exist {
+
 		c.JSON(http.StatusOK, Response{StatusCode: 0})
 	} else {
 		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})

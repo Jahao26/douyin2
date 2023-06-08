@@ -16,7 +16,7 @@ func InitDB() {
 		panic(err)
 	}
 	fmt.Print("MYSQL is connected")
-	err = db.AutoMigrate(&User{}, &UserLogin{})
+	err = db.AutoMigrate(&User{}, &UserLogin{}, &Relation{})
 	if err != nil {
 		panic(err)
 	}

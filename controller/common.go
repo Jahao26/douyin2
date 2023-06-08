@@ -1,5 +1,7 @@
 package controller
 
+import "time"
+
 type Response struct {
 	StatusCode int32  `json:"status_code"`
 	StatusMsg  string `json:"status_msg,omitempty"`
@@ -52,4 +54,10 @@ type UserLogin struct {
 	UserInfoId int64
 	Username   string `gorm:"primary_key"`
 	Password   string `gorm:"size:200;notnull"`
+}
+
+type Relation struct {
+	Follower_id  int64     `gorm:"primary_key"`                                 //被关注的人
+	Following_id int64     `gorm:"primary_key"`                                 // 发起关注的人
+	Create_at    time.Time `gorm:"autoCreateTime;column:created;type:datetime"` // 关注的时间
 }

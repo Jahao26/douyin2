@@ -47,8 +47,11 @@ func Register(c *gin.Context) {
 	} else {
 		atomic.AddInt64(&userIdSequence, 1)
 		newUser := User{
-			Id:   userIdSequence,
-			Name: username,
+			Id:            userIdSequence,
+			Name:          username,
+			FollowCount:   0,
+			FollowerCount: 0,
+			IsFollow:      true,
 		}
 		newUserLogin := UserLogin{
 			Id:       userIdSequence,
@@ -56,6 +59,7 @@ func Register(c *gin.Context) {
 			Password: password,
 		}
 		db.Create(&newUserLogin)
+		db.Create(&newUser) // 放到User表中
 		usersLoginInfo[token] = newUser
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 0},
@@ -74,7 +78,6 @@ func Login(c *gin.Context) {
 	var userlog UserLogin
 	db.Where("username=?", username).First(&userlog)
 	if userlog.Id != 0 { // 登录时用户存在在数据库内
-
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 0},
 			UserId:   userlog.Id,
@@ -89,7 +92,6 @@ func Login(c *gin.Context) {
 
 func UserInfo(c *gin.Context) {
 	token := c.Query("token")
-
 	if user, exist := usersLoginInfo[token]; exist {
 		c.JSON(http.StatusOK, UserResponse{
 			Response: Response{StatusCode: 0},
