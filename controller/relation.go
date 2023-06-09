@@ -3,6 +3,8 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 type UserListResponse struct {
@@ -14,8 +16,17 @@ type UserListResponse struct {
 func RelationAction(c *gin.Context) {
 	token := c.Query("token")           // 当前用户的token
 	to_user_id := c.Query("to_user_id") // 被关注人id
+	intnum, _ := strconv.Atoi(to_user_id)
+	touserid := int64(intnum)
 
 	if user, exist := usersLoginInfo[token]; exist {
+		newRela := Relation{
+			Follower_id:  touserid,
+			Following_id: user.Id,
+			Create_at:    time.Now(),
+		}
+		db.Create(&newRela) // 插入新的数据
+		// 修改
 
 		c.JSON(http.StatusOK, Response{StatusCode: 0})
 	} else {

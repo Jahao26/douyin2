@@ -15,7 +15,6 @@ var usersLoginInfo = map[string]User{
 		Name:          "zhanglei",
 		FollowCount:   10,
 		FollowerCount: 5,
-		IsFollow:      true,
 	},
 }
 
@@ -45,6 +44,8 @@ func Register(c *gin.Context) {
 			Response: Response{StatusCode: 1, StatusMsg: "User already exist"},
 		})
 	} else {
+		db.Last(&userlog)
+		userIdSequence = userlog.Id
 		atomic.AddInt64(&userIdSequence, 1)
 		newUser := User{
 			Id:            userIdSequence,
@@ -53,13 +54,13 @@ func Register(c *gin.Context) {
 			FollowerCount: 0,
 			IsFollow:      true,
 		}
+		db.Create(&newUser) // 放到User表中
 		newUserLogin := UserLogin{
 			Id:       userIdSequence,
 			Username: username,
 			Password: password,
 		}
-		db.Create(&newUserLogin)
-		db.Create(&newUser) // 放到User表中
+		db.Debug().Create(&newUserLogin)
 		usersLoginInfo[token] = newUser
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 0},
