@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/RaymondCode/simple-demo/controller"
+	"douyin/controller"
+	"douyin/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,23 +14,23 @@ func initRouter(r *gin.Engine) {
 
 	// basic apis
 	apiRouter.GET("/feed/", controller.Feed)
-	apiRouter.GET("/user/", controller.UserInfo)
+	apiRouter.GET("/user/", middleware.Automiddleware(), controller.UserInfo)
 	apiRouter.POST("/user/register/", controller.Register)
 	apiRouter.POST("/user/login/", controller.Login)
-	apiRouter.POST("/publish/action/", controller.Publish)
-	apiRouter.GET("/publish/list/", controller.PublishList)
+	apiRouter.POST("/publish/action/", middleware.Automiddleware(), controller.Publish)
+	apiRouter.GET("/publish/list/", middleware.Automiddleware(), controller.PublishList)
 
 	// extra apis - I
-	apiRouter.POST("/favorite/action/", controller.FavoriteAction)
-	apiRouter.GET("/favorite/list/", controller.FavoriteList)
-	apiRouter.POST("/comment/action/", controller.CommentAction)
-	apiRouter.GET("/comment/list/", controller.CommentList)
+	apiRouter.POST("/favorite/action/", middleware.Automiddleware(), controller.FavoriteAction)
+	apiRouter.GET("/favorite/list/", middleware.Automiddleware(), controller.FavoriteList)
+	apiRouter.POST("/comment/action/", middleware.Automiddleware(), controller.CommentAction)
+	apiRouter.GET("/comment/list/", middleware.Automiddleware(), controller.CommentList)
 
 	// extra apis - II
-	apiRouter.POST("/relation/action/", controller.RelationAction)
-	apiRouter.GET("/relation/follow/list/", controller.FollowList)
-	apiRouter.GET("/relation/follower/list/", controller.FollowerList)
-	apiRouter.GET("/relation/friend/list/", controller.FriendList)
-	apiRouter.GET("/message/chat/", controller.MessageChat)
-	apiRouter.POST("/message/action/", controller.MessageAction)
+	apiRouter.POST("/relation/action/", middleware.Automiddleware(), controller.RelationAction)
+	apiRouter.GET("/relation/follow/list/", middleware.Automiddleware(), controller.FollowList)
+	apiRouter.GET("/relation/follower/list/", middleware.Automiddleware(), controller.FollowerList)
+	apiRouter.GET("/relation/friend/list/", middleware.Automiddleware(), controller.FriendList)
+	apiRouter.GET("/message/chat/", middleware.Automiddleware(), controller.MessageChat)
+	apiRouter.POST("/message/action/", middleware.Automiddleware(), controller.MessageAction)
 }

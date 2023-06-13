@@ -27,6 +27,7 @@ type Comment struct {
 type User struct {
 	Id            int64  `json:"id,omitempty"`
 	Name          string `json:"name,omitempty"`
+	Password      string `json:"size:200;notnull"`
 	FollowCount   int64  `json:"follow_count,omitempty"`
 	FollowerCount int64  `json:"follower_count,omitempty"`
 	IsFollow      bool   `json:"is_follow,omitempty"`
@@ -49,12 +50,12 @@ type MessagePushEvent struct {
 	MsgContent string `json:"msg_content,omitempty"`
 }
 
-type UserLogin struct {
-	Id         int64 `gorm:"primary_key"`
-	UserInfoId int64
-	Username   string `gorm:"primary_key"`
-	Password   string `gorm:"size:200;notnull"`
-}
+//type UserLogin struct {
+//	Id         int64 `gorm:"primary_key"`
+//	UserInfoId int64
+//	Username   string `gorm:"primary_key"`
+//	Password   string `gorm:"size:200;notnull"`
+//}
 
 type Relation struct {
 	Follower_id  int64     `gorm:"primary_key"`                                 //被关注的人
