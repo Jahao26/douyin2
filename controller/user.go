@@ -36,12 +36,13 @@ func Register(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
 
+	// 查询数据库中是否有username，没有则插入数据，有则提示失败
 	if id, err := service.NewRegisterFlow(username, password).Do(); err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "Register failed"}})
 		return
 	} else {
-		token, err := middleware.GenToken(id)
+		token, err := middleware.GenToken(id) // 输入id，获得token
 		if err != nil {
 			c.JSON(http.StatusOK, UserLoginResponse{
 				Response: Response{StatusCode: 1, StatusMsg: err.Error()},
@@ -65,7 +66,7 @@ func Login(c *gin.Context) {
 			Response: Response{StatusCode: 1, StatusMsg: "Login failed"}})
 		return
 	} else {
-		token, err := middleware.GenToken(id)
+		token, err := middleware.GenToken(id) // 登录后从id中获取token
 		if err != nil {
 			c.JSON(http.StatusOK, UserLoginResponse{
 				Response: Response{StatusCode: 1, StatusMsg: err.Error()},

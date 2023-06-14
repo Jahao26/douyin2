@@ -13,7 +13,7 @@ type registerFlow struct {
 
 func Register(name string, password string) (int64, error) {
 	// 外部接口 Register
-	return NewRegisterFlow(name, password).Do() // Do?
+	return NewRegisterFlow(name, password).Do()
 }
 
 func NewRegisterFlow(name string, password string) *registerFlow {
