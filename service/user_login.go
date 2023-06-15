@@ -34,9 +34,11 @@ func (f *loginFlow) userLogin() (int64, error) {
 		return 0, errors.New("User not exist")
 	}
 	// 验证用户密码
-	hashpassword := []byte(f.password)
-	mypassword := []byte(user.Password)
-	err = bcrypt.CompareHashAndPassword(hashpassword, mypassword)
+
+	hashpassword := []byte(f.password)  //登录输入的明文密码
+	mypassword := []byte(user.Password) //数据库存储的加密哈希
+
+	err = bcrypt.CompareHashAndPassword(mypassword, hashpassword)
 	if err != nil {
 		return 0, errors.New("Password error: " + err.Error())
 	}

@@ -8,7 +8,7 @@ import (
 type User struct {
 	Id            int64  `gorm:"column:id;primary_key;AUTO_INCREMENT"`
 	Name          string `gorm:"column:name;not null"`
-	Password      string `gorm:"column:password;type:char(60);not null"`
+	Password      string `gorm:"column:password;type:varchar(100);not null"`
 	FollowCount   int64  `gorm:"column:follow_count;not null"`
 	FollowerCount int64  `gorm:"column:follower_count;not null"`
 	IsFollow      bool   `gorm:"column:is_follow;"`

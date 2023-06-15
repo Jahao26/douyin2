@@ -23,7 +23,7 @@ type UserLoginResponse struct {
 func Register(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
-
+	//println("test!!!")
 	// 查询数据库中是否有username，没有则插入数据，有则提示失败
 	if id, err := service.Register(username, password); err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
