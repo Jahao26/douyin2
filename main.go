@@ -1,13 +1,17 @@
 package main
 
 import (
-	"douyin/service"
+	"douyin/repository"
 	"github.com/gin-gonic/gin"
+	"os"
 )
 
 func main() {
-	go service.RunMessageServer()
+	go RunMessageServer()
 
+	if err := repository.InitDB(); err != nil {
+		os.Exit(-1)
+	}
 	r := gin.Default()
 
 	initRouter(r)

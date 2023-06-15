@@ -14,6 +14,10 @@ func InitDB() error {
 	if db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{}); err != nil {
 		return err
 	}
+	err = db.AutoMigrate(&User{})
+	if err != nil {
+		panic(err)
+	}
 	fmt.Print("MYSQL is connected")
 	return err
 }

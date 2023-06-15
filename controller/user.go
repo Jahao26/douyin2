@@ -7,18 +7,6 @@ import (
 	"net/http"
 )
 
-// usersLoginInfo use map to store user info, and key is username+password for demo
-// user data will be cleared every time the server starts
-// test data: username=zhanglei, password=douyin
-//var usersLoginInfo = map[string]User{
-//	"zhangleidouyin": {
-//		Id:            1,
-//		Name:          "zhanglei",
-//		FollowCount:   10,
-//		FollowerCount: 5,
-//	},
-//}
-
 var userIdSequence = int64(1)
 
 type UserLoginResponse struct {
@@ -37,7 +25,7 @@ func Register(c *gin.Context) {
 	password := c.Query("password")
 
 	// 查询数据库中是否有username，没有则插入数据，有则提示失败
-	if id, err := service.NewRegisterFlow(username, password).Do(); err != nil {
+	if id, err := service.Register(username, password); err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "Register failed"}})
 		return
@@ -45,7 +33,7 @@ func Register(c *gin.Context) {
 		token, err := middleware.GenToken(id) // 输入id，获得token
 		if err != nil {
 			c.JSON(http.StatusOK, UserLoginResponse{
-				Response: Response{StatusCode: 1, StatusMsg: err.Error()},
+				Response: Response{StatusCode: 1, StatusMsg: "Token process failed: " + err.Error()},
 			})
 			return
 		}
@@ -61,9 +49,9 @@ func Login(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
 
-	if id, err := service.NewLoginFlow(username, password).Do(); err != nil {
+	if id, err := service.UserLogin(username, password); err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "Login failed"}})
+			Response: Response{StatusCode: 1, StatusMsg: err.Error()}})
 		return
 	} else {
 		token, err := middleware.GenToken(id) // 登录后从id中获取token

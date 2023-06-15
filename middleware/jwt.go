@@ -21,7 +21,7 @@ func GenToken(id int64) (string, error) {
 			NotBefore: jwt.NewNumericDate(time.Now()),
 		}}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(mysecret)
 	return tokenString, err
 }

@@ -20,13 +20,14 @@ type ChatResponse struct {
 
 // MessageAction no practical effect, just check if token is valid
 func MessageAction(c *gin.Context) {
-	token := c.Query("token")
+	//token := c.Query("token")
 	toUserId := c.Query("to_user_id")
 	content := c.Query("content")
 
-	if user, exist := usersLoginInfo[token]; exist {
+	if userid, exist := c.Get("uid"); exist {
 		userIdB, _ := strconv.Atoi(toUserId)
-		chatKey := genChatKey(user.Id, int64(userIdB))
+		uid := userid.(int64)
+		chatKey := genChatKey(uid, int64(userIdB))
 
 		atomic.AddInt64(&messageIdSequence, 1)
 		curMessage := Message{
@@ -48,12 +49,12 @@ func MessageAction(c *gin.Context) {
 
 // MessageChat all users have same follow list
 func MessageChat(c *gin.Context) {
-	token := c.Query("token")
 	toUserId := c.Query("to_user_id")
 
-	if user, exist := usersLoginInfo[token]; exist {
+	if userid, exist := c.Get("uid"); exist {
 		userIdB, _ := strconv.Atoi(toUserId)
-		chatKey := genChatKey(user.Id, int64(userIdB))
+		uid := userid.(int64)
+		chatKey := genChatKey(uid, int64(userIdB))
 
 		c.JSON(http.StatusOK, ChatResponse{Response: Response{StatusCode: 0}, MessageList: tempChat[chatKey]})
 	} else {

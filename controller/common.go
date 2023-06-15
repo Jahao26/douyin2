@@ -48,6 +48,15 @@ type MessagePushEvent struct {
 //	Password   string `gorm:"size:200;notnull"`
 //}
 
+type User struct {
+	Id            int64  `json:"id,omitempty"`
+	Name          string `json:"name,omitempty"`
+	Password      string `json:"size:200;notnull"`
+	FollowCount   int64  `json:"follow_count,omitempty"`
+	FollowerCount int64  `json:"follower_count,omitempty"`
+	IsFollow      bool   `json:"is_follow,omitempty"`
+}
+
 type Relation struct {
 	Follower_id  int64     `gorm:"primary_key"`                                 //被关注的人
 	Following_id int64     `gorm:"primary_key"`                                 // 发起关注的人

@@ -22,7 +22,7 @@ func NewLoginFlow(name string, password string) *loginFlow {
 func (f *loginFlow) Do() (int64, error) {
 	uid, err := f.userLogin()
 	if err != nil {
-		return 0, errors.New("Error in login")
+		return 0, errors.New(err.Error())
 	}
 	return uid, nil
 }
@@ -38,7 +38,7 @@ func (f *loginFlow) userLogin() (int64, error) {
 	mypassword := []byte(user.Password)
 	err = bcrypt.CompareHashAndPassword(hashpassword, mypassword)
 	if err != nil {
-		return 0, errors.New("Password error")
+		return 0, errors.New("Password error: " + err.Error())
 	}
 
 	// 返回验证成功的用户uid

@@ -14,7 +14,7 @@ func initRouter(r *gin.Engine) {
 
 	// basic apis
 	apiRouter.GET("/feed/", controller.Feed)
-	apiRouter.GET("/user/", middleware.Automiddleware(), controller.UserInfo)
+	// apiRouter.GET("/user/", middleware.Automiddleware(), controller.UserInfo)
 	apiRouter.POST("/user/register/", controller.Register)
 	apiRouter.POST("/user/login/", controller.Login)
 	apiRouter.POST("/publish/action/", middleware.Automiddleware(), controller.Publish)
