@@ -20,7 +20,7 @@ type UserDAO struct {
 var userDao *UserDAO // UserDAO这个类只有一个实例
 var userOnce sync.Once
 
-// 单例模式我的理解是：如果外界想要操作数据库，只能通过这个单例，这个单例有且仅会被创建一次
+// 单例模式：如果外界想要操作数据库，只能通过这个单例，这个单例有且仅会被创建一次
 
 func NewUserDao() *UserDAO { // 单例设计模式：懒汉模式
 	// 这个函数暴露唯一的接口对外使用

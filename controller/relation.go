@@ -15,8 +15,7 @@ type UserListResponse struct {
 // RelationAction 点击关注按钮，添加到follow数据库和被关注人的follower数据库
 func RelationAction(c *gin.Context) {
 	touserid := c.Query("to_user_id") // 被关注人id
-	intnum, _ := strconv.Atoi(touserid)
-	to_user_id := int64(intnum)
+	to_user_id, _ := strconv.ParseInt(touserid, 10, 64)
 
 	if userid, exist := c.Get("uid"); exist {
 		uid := userid.(int64)

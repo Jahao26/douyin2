@@ -11,7 +11,7 @@ import (
 func TestFeed(t *testing.T) {
 	e := newExpect(t)
 
-	feedResp := e.GET("/douyin/feed/").Expect().Status(http.StatusOK).JSON().Object()
+	feed02Resp := e.GET("/douyin/feed/").Expect().Status(http.StatusOK).JSON().Object()
 	feedResp.Value("status_code").Number().Equal(0)
 	feedResp.Value("video_list").Array().Length().Gt(0)
 

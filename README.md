@@ -3,13 +3,15 @@
 ## Compile and Run
 
 ```shell
-go build main.go router.go
+go build main.go router.go serverRunner.go
 .\main.exe
 ```
 
 ## Function specification
 
-开发中
+基础API：用户注册、用户登录
+
+开发中...
 
 ## Test
 

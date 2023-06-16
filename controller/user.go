@@ -2,6 +2,7 @@ package controller
 
 import (
 	"douyin/middleware"
+	"douyin/repository"
 	"douyin/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -15,10 +16,10 @@ type UserLoginResponse struct {
 	Token  string `json:"token"`
 }
 
-//type UserResponse struct { // ???
-//	Response
-//	User *service.User `json:"user"`
-//}
+type UserResponse struct {
+	Response
+	User *repository.User `json:"user"`
+}
 
 func Register(c *gin.Context) {
 	username := c.Query("username")
@@ -68,35 +69,45 @@ func Login(c *gin.Context) {
 		})
 	}
 
-	//token := username + password
-	//var userlog User
-	//db.Where("name=?", username).First(&userlog)
-	//if userlog.Id != 0 { // 登录时用户存在在数据库内
-	//	c.JSON(http.StatusOK, UserLoginResponse{
-	//		Response: Response{StatusCode: 0},
-	//		UserId:   userlog.Id,
-	//		Token:    token,
-	//	})
-	//	//usersLoginInfo[token] = userlog
-	//} else {
-	//	c.JSON(http.StatusOK, UserLoginResponse{
-	//		Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
-	//	})
-	//}
 }
 
-//// 验证用户是否存在
+func UserInfo(c *gin.Context) {
+	// 因为登录仅获取id和name，Userinfo获取其他关注和粉丝信息
+	// userid := c.Query("user_id")
+	if userid, exist := c.Get("uid"); exist {
+		uid := userid.(int64)
+		user, err := service.QueryUserById(uid)
+		if err != nil {
+			c.JSON(http.StatusOK, UserResponse{Response: Response{StatusCode: 1, StatusMsg: err.Error()}})
+			return
+		}
+		c.JSON(http.StatusOK, UserResponse{
+			Response: Response{StatusCode: 0},
+			User:     user,
+		})
+	}
+}
+
 //func UserInfo(c *gin.Context) {
-//	token := c.Query("token")
-//	if user, exist := usersLoginInfo[token]; exist {
-//		c.JSON(http.StatusOK, UserResponse{
-//			Response: Response{StatusCode: 0},
-//			User:     user,
-//		})
-//
-//	} else {
-//		c.JSON(http.StatusOK, UserResponse{
-//			Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
-//		})
+//	// 因为登录仅获取id和name，Userinfo获取其他关注和粉丝信息
+//	userid := c.Query("user_id")
+//	uid, err := strconv.ParseInt(userid, 10, 64)
+//	if err != nil {
+//		c.JSON(http.StatusOK, UserResponse{Response: Response{StatusCode: 1, StatusMsg: "Id convert error"}})
 //	}
+//	_, err = service.QueryUserById(uid)
+//	if err != nil {
+//		c.JSON(http.StatusOK, UserResponse{Response: Response{StatusCode: 1, StatusMsg: err.Error()}})
+//		return
+//	}
+//	c.JSON(http.StatusOK, UserResponse{
+//		Response: Response{StatusCode: 0},
+//		User: &repository.User{
+//			Id:            10,
+//			Name:          "zhengjiahao",
+//			FollowCount:   99,
+//			FollowerCount: 99,
+//			IsFollow:      true,
+//		},
+//	})
 //}
