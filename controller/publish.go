@@ -51,6 +51,15 @@ func Publish(c *gin.Context) {
 
 // PublishList all users have same publish video list
 func PublishList(c *gin.Context) {
+	uid, exist := c.Get("uid")
+	if !exist {
+		return
+	}
+	userid := c.Query("user_id")
+	fmt.Println("**********IN PUBLISHLIST*************")
+	fmt.Println(uid)
+	fmt.Println(userid)
+	fmt.Println("***********IN PUBLISHLIST***********")
 	c.JSON(http.StatusOK, VideoListResponse{
 		Response: Response{
 			StatusCode: 0,

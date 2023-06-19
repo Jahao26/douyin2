@@ -2,13 +2,22 @@ package controller
 
 import (
 	"douyin/middleware"
-	"douyin/repository"
 	"douyin/service"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 var userIdSequence = int64(1)
+
+type UserInfoPage struct {
+	Id            int64
+	Name          string
+	FollowCount   int64
+	FollowerCount int64
+	IsFollow      bool
+}
 
 type UserLoginResponse struct {
 	Response
@@ -18,7 +27,7 @@ type UserLoginResponse struct {
 
 type UserResponse struct {
 	Response
-	User *repository.User `json:"user"`
+	User UserInfoPage `json:"user"`
 }
 
 func Register(c *gin.Context) {
@@ -71,43 +80,49 @@ func Login(c *gin.Context) {
 
 }
 
-func UserInfo(c *gin.Context) {
-	// 因为登录仅获取id和name，Userinfo获取其他关注和粉丝信息
-	// userid := c.Query("user_id")
-	if userid, exist := c.Get("uid"); exist {
-		uid := userid.(int64)
-		user, err := service.QueryUserById(uid)
-		if err != nil {
-			c.JSON(http.StatusOK, UserResponse{Response: Response{StatusCode: 1, StatusMsg: err.Error()}})
-			return
-		}
-		c.JSON(http.StatusOK, UserResponse{
-			Response: Response{StatusCode: 0},
-			User:     user,
-		})
-	}
-}
-
 //func UserInfo(c *gin.Context) {
 //	// 因为登录仅获取id和name，Userinfo获取其他关注和粉丝信息
-//	userid := c.Query("user_id")
-//	uid, err := strconv.ParseInt(userid, 10, 64)
-//	if err != nil {
-//		c.JSON(http.StatusOK, UserResponse{Response: Response{StatusCode: 1, StatusMsg: "Id convert error"}})
+//	// userid := c.Query("user_id")
+//	userid, exist := c.Get("uid")
+//	if exist {
+//		uid := userid.(int64)
+//		user, err := service.QueryUserById(uid)
+//		if err != nil {
+//			c.JSON(http.StatusOK, UserResponse{Response: Response{StatusCode: 1, StatusMsg: err.Error()}})
+//			return
+//		}
+//		c.JSON(http.StatusOK, UserResponse{
+//			Response: Response{StatusCode: 0},
+//			User:     user,
+//		})
 //	}
-//	_, err = service.QueryUserById(uid)
-//	if err != nil {
-//		c.JSON(http.StatusOK, UserResponse{Response: Response{StatusCode: 1, StatusMsg: err.Error()}})
-//		return
-//	}
-//	c.JSON(http.StatusOK, UserResponse{
-//		Response: Response{StatusCode: 0},
-//		User: &repository.User{
-//			Id:            10,
-//			Name:          "zhengjiahao",
-//			FollowCount:   99,
-//			FollowerCount: 99,
-//			IsFollow:      true,
-//		},
-//	})
 //}
+
+func UserInfo(c *gin.Context) {
+	// 因为登录仅获取id和name，Userinfo获取其他关注和粉丝信息
+	userid := c.Query("user_id")
+	uid, err := strconv.ParseInt(userid, 10, 64)
+	uidget, _ := c.Get("uid") // 通过解析token得到的user_id
+	fmt.Println("*****************IN USER***********")
+	fmt.Println(uid)
+	fmt.Println(uidget)
+	fmt.Println("*****************IN USER***********")
+	if err != nil {
+		c.JSON(http.StatusOK, UserResponse{Response: Response{StatusCode: 1, StatusMsg: "Id convert error"}})
+	}
+	_, err = service.QueryUserById(uid)
+	if err != nil {
+		c.JSON(http.StatusOK, UserResponse{Response: Response{StatusCode: 1, StatusMsg: err.Error()}})
+		return
+	}
+	c.JSON(http.StatusOK, UserResponse{
+		Response: Response{StatusCode: 0},
+		User: UserInfoPage{
+			Id:            10,
+			Name:          "zhengjiahao",
+			FollowCount:   99,
+			FollowerCount: 99,
+			IsFollow:      true,
+		},
+	})
+}
