@@ -18,6 +18,8 @@ func InitDB() error {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Print("MYSQL is connected")
+	fmt.Println("****************************************")
+	fmt.Println("MYSQL is connected")
+	fmt.Println("****************************************")
 	return err
 }

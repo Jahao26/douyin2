@@ -6,12 +6,12 @@ import (
 )
 
 type User struct {
-	Id            int64  `gorm:"column:id;primary_key;AUTO_INCREMENT"`
-	Name          string `gorm:"column:name;not null"`
-	Password      string `gorm:"column:password;type:varchar(100);not null"`
-	FollowCount   int64  `gorm:"column:follow_count;not null"`
-	FollowerCount int64  `gorm:"column:follower_count;not null"`
-	IsFollow      bool   `gorm:"column:is_follow;"`
+	Id            int64  `gorm:"column:id;primary_key;AUTO_INCREMENT" redis:"id"`
+	Name          string `gorm:"column:name;not null" redis:"name"`
+	Password      string `gorm:"column:password;type:varchar(100);not null" redis:"password"`
+	FollowCount   int64  `gorm:"column:follow_count;not null" redis:"follow_count"`
+	FollowerCount int64  `gorm:"column:follower_count;not null" redis:"follower_count"`
+	IsFollow      bool   `gorm:"column:is_follow;" redis:"-"`
 }
 
 type UserDAO struct {

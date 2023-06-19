@@ -21,6 +21,7 @@ func Publish(c *gin.Context) {
 			StatusMsg:  "Uid get error",
 		})
 	}
+
 	uid := userid.(int64)
 	// FormFile源码：通过Request.ParseMultipartForm对上传文件参数进行解析，然后调用Request.FormFile获取文件头FileHeader
 	data, err := c.FormFile("data")
@@ -51,15 +52,11 @@ func Publish(c *gin.Context) {
 
 // PublishList all users have same publish video list
 func PublishList(c *gin.Context) {
-	uid, exist := c.Get("uid")
+	_, exist := c.Get("uid")
 	if !exist {
 		return
 	}
-	userid := c.Query("user_id")
-	fmt.Println("**********IN PUBLISHLIST*************")
-	fmt.Println(uid)
-	fmt.Println(userid)
-	fmt.Println("***********IN PUBLISHLIST***********")
+
 	c.JSON(http.StatusOK, VideoListResponse{
 		Response: Response{
 			StatusCode: 0,

@@ -19,6 +19,7 @@ type CommentActionResponse struct {
 // CommentAction no practical effect, just check if token is valid
 // Demand: User can comment the video (need:uid, video_id, text...)
 func CommentAction(c *gin.Context) {
+
 	actionType := c.Query("action_type")
 
 	if userid, exist := c.Get("uid"); exist {

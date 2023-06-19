@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -21,15 +20,11 @@ func FavoriteAction(c *gin.Context) {
 // FavoriteList all users have same favorite video list
 // Demand: 不同用户有不同的的喜欢视频的列表
 func FavoriteList(c *gin.Context) {
-	uid, exist := c.Get("uid")
+	_, exist := c.Get("uid")
 	if !exist {
 		return
 	}
-	userid := c.Query("user_id")
-	fmt.Println("**********IN FAVOURITELIST*************")
-	fmt.Println(uid)
-	fmt.Println(userid)
-	fmt.Println("***********IN FAVOURITELIST***********")
+
 	c.JSON(http.StatusOK, VideoListResponse{
 		Response: Response{
 			StatusCode: 0,
