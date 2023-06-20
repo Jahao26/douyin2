@@ -11,6 +11,7 @@ import (
 var userIdSequence = int64(1)
 
 type UserInfoPage struct {
+	// 个人主页情况
 	Id            int64  `json:"id,omitempty"`
 	Name          string `json:"name,omitempty"`
 	FollowCount   int64  `json:"follow_count,omitempty"`
@@ -105,27 +106,3 @@ func UserInfo(c *gin.Context) {
 		})
 	}
 }
-
-//func UserInfo(c *gin.Context) {
-//	// 因为登录仅获取id和name，Userinfo获取其他关注和粉丝信息
-//	// userid := c.Query("user_id")
-//	userid := c.Query("user_id")
-//	uid, err := strconv.ParseInt(userid, 10, 64)
-//	user, err := service.QueryUserById(uid)
-//	if err != nil {
-//		c.JSON(http.StatusOK, UserResponse{Response: Response{StatusCode: 1, StatusMsg: err.Error()}})
-//		return
-//	} else {
-//		fmt.Println("in userinfo: ", user.Id, user.Name, user.FollowerCount)
-//	}
-//	c.JSON(http.StatusOK, UserResponse{
-//		Response: Response{StatusCode: 0},
-//		User: UserInfoPage{
-//			Id:            10,
-//			Name:          "zhengjiahao",
-//			FollowCount:   99,
-//			FollowerCount: 99,
-//			IsFollow:      true,
-//		},
-//	})
-//}

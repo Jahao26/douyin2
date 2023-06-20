@@ -8,8 +8,8 @@ import (
 
 type FeedResponse struct {
 	Response
-	VideoList []Video `json:"video_list,omitempty"`
-	NextTime  int64   `json:"next_time,omitempty"`
+	VideoList []VideoResponse `json:"video_list,omitempty"`
+	NextTime  int64           `json:"next_time,omitempty"`
 }
 
 // Feed same demo video list for every request
@@ -20,10 +20,10 @@ func Feed(c *gin.Context) {
 	//		Response: Response{StatusCode: 1, StatusMsg: "failed to feed"},
 	//	})
 	//}
-
+	// 统一传入空列表，没有视频
 	c.JSON(http.StatusOK, FeedResponse{
 		Response:  Response{StatusCode: 0},
-		VideoList: DemoVideos,
+		VideoList: []VideoResponse{},
 		NextTime:  time.Now().Unix(),
 	})
 }
