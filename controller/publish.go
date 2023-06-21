@@ -29,7 +29,7 @@ type VideoListResponse struct {
 // Publish check token then save upload file to public directory
 // Action无法获取到token，post401
 func Publish(c *gin.Context) {
-	userid, exist := c.Get("uid") // 此处已经通过解析token获得uid
+	userid, exist := c.Get("uid") // 此处已经通过解析 token获得uid
 	if !exist {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 1,
@@ -51,7 +51,8 @@ func Publish(c *gin.Context) {
 	// 以用户id+文件名作为存储名，上传到本地
 	filename := filepath.Base(data.Filename)
 	finalName := fmt.Sprintf("%d_%d_%s", uid, time.Now().Unix(), filename)
-	saveFile := filepath.Join("./public/", finalName)
+	// saveFile := filepath.Join("./public/", finalName)
+	saveFile := "./public/" + finalName
 	if err := c.SaveUploadedFile(data, saveFile); err != nil {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 1,
@@ -110,10 +111,10 @@ func PublishList(c *gin.Context) {
 		},
 		VideoList: []VideoResponse{
 			{
-				Id:     1,
-				Author: user,
-				//PlayUrl: "https://www.w3schools.com/html/movie.mp4",
-				PlayUrl:       "./public/bear.mp4",
+				Id:      1,
+				Author:  user,
+				PlayUrl: "https://www.w3schools.com/html/movie.mp4",
+				//PlayUrl:       "./public/bear.mp4",
 				CoverUrl:      "https://cdn.pixabay.com/photo/2016/03/27/18/10/bear-1283347_1280.jpg",
 				FavoriteCount: 0,
 				CommentCount:  0,

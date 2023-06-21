@@ -23,9 +23,9 @@ func UploadVideo(uid int64, vpath string, cpath string) error {
 
 func GetCoverimage(videoPath string, imageName string) (string, error) {
 	// 输出封面图片的路径
-	snapshotPath := "/public/" + imageName
+	snapshotPath := "./public/" + imageName
 	buf := bytes.NewBuffer(nil)
-	err := ffmpeg_go.Input(videoPath).Filter("select", ffmpeg_go.Args{fmt.Sprintf("gte(n,%d)", 0.5)}).
+	err := ffmpeg_go.Input(videoPath).Filter("select", ffmpeg_go.Args{fmt.Sprintf("gte(n,%d)", 1)}).
 		Output("pipe:", ffmpeg_go.KwArgs{"vframes": 1, "format": "image2", "vcodec": "mjpeg"}).
 		WithOutput(buf, os.Stdout).
 		Run()
@@ -37,13 +37,13 @@ func GetCoverimage(videoPath string, imageName string) (string, error) {
 
 	img, err := imaging.Decode(buf)
 	if err != nil {
-		log.Fatal("生成缩略图失败：", err)
+		log.Fatal("缩略图解码失败：", err)
 		return "", err
 	}
 
 	err = imaging.Save(img, snapshotPath+".png")
 	if err != nil {
-		log.Fatal("生成缩略图失败：", err)
+		log.Fatal("缩略图保存失败：", err)
 		return "", err
 	}
 
