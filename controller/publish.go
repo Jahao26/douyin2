@@ -47,6 +47,7 @@ func Publish(c *gin.Context) {
 			StatusMsg:  err.Error(),
 		})
 		return
+
 	}
 	// 以用户id+文件名作为存储名，上传到本地
 	filename := filepath.Base(data.Filename)
