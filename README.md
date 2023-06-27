@@ -9,7 +9,7 @@ go build main.go router.go serverRunner.go
 
 ## Function specification
 
-基础API：用户注册、用户登录
+基础API：用户注册、用户登录、视频流上传
 
 开发中...
 
