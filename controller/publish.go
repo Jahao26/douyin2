@@ -73,7 +73,11 @@ func Publish(c *gin.Context) {
 		})
 	}
 	// 将视频信息存储到数据库
-	if err := service.UploadVideo(uid, saveFile, coverPath); err != nil {
+	// 将视频信息存储到数据库
+	// 具体IP为服务器IP，localhost和127.0.0.1不能解析，原因未知
+	videoPath := "http://10.16.43.102:8080/static/" + finalName
+	figPath := "http://10.16.43.102:8080/static/" + coverPath[9:]
+	if err := service.UploadVideo(uid, videoPath, figPath); err != nil {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 1,
 			StatusMsg:  err.Error(),
