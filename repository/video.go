@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"sync"
 )
 
@@ -9,7 +10,7 @@ type Video struct {
 	Uid           int64  `gorm:"column:uid;not null" redis:"uid"`
 	PlayUrl       string `gorm:"column:playurl;type:varchar(255);not null" redis:"playurl"`
 	CoverUrl      string `gorm:"column:coverurl;type:varchar(255);not null" redis:"coverurl"`
-	FavoriteCount int64  `gorm:"column:favourite_count;not null" redis:"favourite_count"`
+	FavoriteCount int64  `gorm:"column:favorite_count;not null" redis:"favorite_count"`
 	CommentCount  int64  `gorm:"column:comment_count;not null" redis:"comment_count"`
 	IsFavorite    bool   `gorm:"column:is_favourite;" redis:"-"`
 }
@@ -34,4 +35,12 @@ func (*VideoDAO) AddVideo(video *Video) error {
 		return err
 	}
 	return nil
+}
+
+func (*VideoDAO) GetVideo(uid int64, videoList *[]*Video) error {
+	if videoList == nil {
+		return errors.New("QueryVideoListByUserId videoList 空指针")
+	}
+	return db.Where("uid=?", uid).
+		Find(&videoList).Error
 }
