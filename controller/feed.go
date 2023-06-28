@@ -9,8 +9,8 @@ import (
 
 type FeedResponse struct {
 	Response
-	VideoList []service.VideoResponse `json:"video_list,omitempty"`
-	NextTime  int64                   `json:"next_time,omitempty"`
+	VideoList []*service.VideoResponse `json:"video_list,omitempty"`
+	NextTime  int64                    `json:"next_time,omitempty"`
 }
 
 // Feed same demo video list for every request
@@ -27,10 +27,13 @@ func Feed(c *gin.Context) {
 			Response: Response{StatusCode: 1, StatusMsg: err.Error()},
 		})
 	}
-	// 统一传入空列表，没有视频
+	// 获得推荐的视频列表，uid用于后续判断用户是否点赞
+	uid := userid.(int64)
+	videolist, err := service.QueryFeedVideoList(uid)
+
 	c.JSON(http.StatusOK, FeedResponse{
 		Response:  Response{StatusCode: 0},
-		VideoList: []service.VideoResponse{},
+		VideoList: videolist.Videos,
 		NextTime:  time.Now().Unix(),
 	})
 }

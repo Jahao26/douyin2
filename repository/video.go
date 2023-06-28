@@ -41,10 +41,20 @@ func (*VideoDAO) AddVideo(video *Video) error {
 func (*VideoDAO) GetVideoByUid(uid int64, videoList *[]*Video) error {
 
 	if videoList == nil {
-		return errors.New("QueryVideoListByUserId videoList 空指针")
+		return errors.New("QueryVideoListByUserId videoList is nil")
 	}
 	return db.Where("uid=?", uid).
 		Find(&videoList).Error
+}
+
+func (*VideoDAO) GetVideoByLimit(limit int, videoList *[]*Video) error {
+	if videoList == nil {
+		return errors.New("QueryVideoListByUserId videoList is nil")
+	}
+	if err := db.Limit(limit).Find(&videoList).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 func (*VideoDAO) AddVideoFavorite(id int64) error { // 在增加视频喜欢的同时，将uid-vid-isfavorite更改
