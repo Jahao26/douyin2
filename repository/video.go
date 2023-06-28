@@ -38,10 +38,6 @@ func (*VideoDAO) AddVideo(video *Video) error {
 	return nil
 }
 
-func (*VideoDAO) GetVideo(uid int64, videoList *[]*Video) error {
-	return nil
-}
-
 func (*VideoDAO) GetVideoByUid(uid int64, videoList *[]*Video) error {
 
 	if videoList == nil {
