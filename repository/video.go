@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"gorm.io/gorm"
 	"sync"
 )
 
@@ -12,7 +13,7 @@ type Video struct {
 	CoverUrl      string `gorm:"column:coverurl;type:varchar(255);not null" redis:"coverurl"`
 	FavoriteCount int64  `gorm:"column:favorite_count;not null" redis:"favorite_count"`
 	CommentCount  int64  `gorm:"column:comment_count;not null" redis:"comment_count"`
-	IsFavorite    bool   `gorm:"column:is_favourite;" redis:"-"`
+	IsFavorite    bool   `gorm:"column:is_favorite;" redis:"-"`
 }
 
 type VideoDAO struct {
@@ -43,4 +44,24 @@ func (*VideoDAO) GetVideo(uid int64, videoList *[]*Video) error {
 	}
 	return db.Where("uid=?", uid).
 		Find(&videoList).Error
+}
+
+func (*VideoDAO) AddVideoFavorite(id int64) error { // 在增加视频喜欢的同时，将uid-vid-isfavorite更改
+	if err := db.Model(&Video{}).Where("id=?", id).UpdateColumn("favorite_count", gorm.Expr("favorite_count+?", 1)); err != nil {
+		panic(err)
+	}
+	if err := db.Model(&Video{}).Update("is_favorite", "true"); err != nil {
+		panic(err)
+	}
+	return nil
+}
+
+func (*VideoDAO) RmVideoFavorite(id int64) error {
+	if err := db.Model(&Video{}).Where("id=?", id).UpdateColumn("favorite_count", gorm.Expr("favorite_count-?", 1)); err != nil {
+		panic(err)
+	}
+	if err := db.Model(&Video{}).Update("is_favorite", "false"); err != nil {
+		panic(err)
+	}
+	return nil
 }
