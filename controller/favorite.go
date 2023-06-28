@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"douyin/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -27,6 +28,6 @@ func FavoriteList(c *gin.Context) {
 		Response: Response{
 			StatusCode: 0,
 		},
-		VideoList: []VideoResponse{},
+		VideoList: []*service.VideoResponse{},
 	})
 }

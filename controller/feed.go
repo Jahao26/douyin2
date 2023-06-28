@@ -9,8 +9,8 @@ import (
 
 type FeedResponse struct {
 	Response
-	VideoList []VideoResponse `json:"video_list,omitempty"`
-	NextTime  int64           `json:"next_time,omitempty"`
+	VideoList []service.VideoResponse `json:"video_list,omitempty"`
+	NextTime  int64                   `json:"next_time,omitempty"`
 }
 
 // Feed same demo video list for every request
@@ -30,6 +30,7 @@ func Feed(c *gin.Context) {
 	// 统一传入空列表，没有视频
 	c.JSON(http.StatusOK, FeedResponse{
 		Response: Response{StatusCode: 0},
+<<<<<<< HEAD
 		VideoList: []VideoResponse{
 			{
 				Id:       1,
@@ -63,6 +64,7 @@ func Feed(c *gin.Context) {
 			//	CommentCount:  0,
 			//	IsFavorite:    false,
 			//},
+<<<<<<< HEAD
 			//{
 			//	Id:     4,
 			//	Author: user,
@@ -76,6 +78,62 @@ func Feed(c *gin.Context) {
 			//	CommentCount:  0,
 			//	IsFavorite:    false,
 			//},
+=======
+			{
+				Id:     4,
+				Author: user,
+				//PlayUrl:  "http://127.0.0.1:8080/static/5_1687318088_VIDEO_20230621_112811122.mp4",
+				//CoverUrl: "http://127.0.0.1:8080/static/5_1687318088_VIDEO_20230621_112811122.png",
+				PlayUrl:  "http://10.16.43.102:8080/static/5_1687318088_VIDEO_20230621_112811122.mp4",
+				CoverUrl: "http://10.16.43.102:8080/static/5_1687318088_VIDEO_20230621_112811122.png",
+				//PlayUrl:       "./public/5_1687318088_VIDEO_20230621_112811122.mp4",
+				//CoverUrl:      "./public/5_1687318088_VIDEO_20230621_112811122.png",
+=======
+		VideoList: []service.VideoResponse{
+			{
+				Id:     1,
+				Author: user,
+				//PlayUrl: "https://vfx.mtime.cn/Video/2022/11/11/mp4/221111235609124131.mp4",
+				PlayUrl: "http://192.168.101.1:8080/static/1_1687833749_221111235609124131.mp4",
+				//CoverUrl: "https://ww1.sinaimg.cn/mw690/007Sal7sly1henb0uz8z7j31jk25sb2a.jpg",
+				CoverUrl:      "http://192.168.101.1:8080/static/1_1687833749_221111235609124131.png",
+				FavoriteCount: 0,
+				CommentCount:  0,
+				IsFavorite:    false,
+			},
+			{
+				Id:            2,
+				Author:        user,
+				PlayUrl:       "https://www.w3schools.com/html/movie.mp4",
+				CoverUrl:      "https://cdn.pixabay.com/photo/2016/03/27/18/10/bear-1283347_1280.jpg",
+				FavoriteCount: 0,
+				CommentCount:  0,
+				IsFavorite:    false,
+			},
+			{
+				Id:     3,
+				Author: user,
+				//PlayUrl: "public/5_1687318088_VIDEO_20230621_112811122.mp4",
+				PlayUrl: "http://192.168.101.1:8080/static/5_1687318088_VIDEO_20230621_112811122.mp4",
+				//CoverUrl: "public/5_1687318088_VIDEO_20230621_112811122.png",
+				CoverUrl:      "http://192.168.101.1:8080/static/5_1687318088_VIDEO_20230621_112811122.png",
+				FavoriteCount: 0,
+				CommentCount:  0,
+				IsFavorite:    false,
+			},
+			{
+				Id:     4,
+				Author: user,
+				//PlayUrl: "public/5_1687318088_VIDEO_20230621_112811122.mp4",
+				PlayUrl: "http://10.16.23.66:8080/static/5_1687318088_VIDEO_20230621_112811122.mp4",
+				//CoverUrl: "public/5_1687318088_VIDEO_20230621_112811122.png",
+				CoverUrl:      "http://10.16.23.66:8080/static/5_1687318088_VIDEO_20230621_112811122.png",
+>>>>>>> 5438849 (bug in publishList)
+				FavoriteCount: 0,
+				CommentCount:  0,
+				IsFavorite:    false,
+			},
+>>>>>>> d9faeeb (bug in publishList)
 		},
 		NextTime: time.Now().Unix(),
 	})

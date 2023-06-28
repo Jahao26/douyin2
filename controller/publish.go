@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"douyin/repository"
 	"douyin/service"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -11,6 +10,7 @@ import (
 	"time"
 )
 
+<<<<<<< HEAD
 type VideoResponse struct {
 	Id            int64            `json:"id,omitempty"`
 	Author        *repository.User `json:"author"`
@@ -21,9 +21,11 @@ type VideoResponse struct {
 	IsFavorite    bool             `json:"is_favorite,omitempty"`
 }
 
+=======
+>>>>>>> 5438849 (bug in publishList)
 type VideoListResponse struct {
 	Response
-	VideoList []VideoResponse `json:"video_list"`
+	VideoList []*service.VideoResponse `json:"video_list"`
 }
 
 // Publish check token then save upload file to public directory
@@ -99,21 +101,26 @@ func PublishList(c *gin.Context) {
 		return
 	}
 	uid := userid.(int64)
-	user, err := service.QueryUserById(uid)
+	_, err := service.QueryUserById(uid)
 	if err != nil {
 		c.JSON(http.StatusOK, VideoListResponse{
 			Response: Response{
 				StatusCode: 1,
 				StatusMsg:  "User not exist",
 			},
-			VideoList: []VideoResponse{},
+			VideoList: []*service.VideoResponse{},
 		})
 	}
+<<<<<<< HEAD
+=======
+	videolist, err := service.QuaryVideolistByUid(uid)
+>>>>>>> 5438849 (bug in publishList)
 
 	c.JSON(http.StatusOK, VideoListResponse{
 		Response: Response{
 			StatusCode: 0,
 		},
+<<<<<<< HEAD
 		VideoList: []VideoResponse{
 			{
 				Id:      1,
@@ -126,5 +133,8 @@ func PublishList(c *gin.Context) {
 				IsFavorite:    false,
 			},
 		},
+=======
+		VideoList: videolist.Videos,
+>>>>>>> 5438849 (bug in publishList)
 	})
 }
