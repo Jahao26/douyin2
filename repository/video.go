@@ -38,11 +38,12 @@ func (*VideoDAO) AddVideo(video *Video) error {
 	return nil
 }
 
-<<<<<<< HEAD
 func (*VideoDAO) GetVideo(uid int64, videoList *[]*Video) error {
-=======
+	return nil
+}
+
 func (*VideoDAO) GetVideoByUid(uid int64, videoList *[]*Video) error {
->>>>>>> 5438849 (bug in publishList)
+
 	if videoList == nil {
 		return errors.New("QueryVideoListByUserId videoList 空指针")
 	}
