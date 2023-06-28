@@ -8,8 +8,6 @@ import (
 // FavoriteAction no practical effect, just check if token is valid
 // Demand: database(video-like)+1, 用户喜欢的视频列表+1
 func FavoriteAction(c *gin.Context) {
-	// token := c.Query("token")
-
 	if _, exist := c.Get("uid"); exist {
 		c.JSON(http.StatusOK, Response{StatusCode: 0})
 	} else {
