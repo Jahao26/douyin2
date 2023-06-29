@@ -36,11 +36,8 @@ func (*FavoriteDAO) AddFavorite(uid int64, vid int64) error {
 
 func (*FavoriteDAO) RmFavorite(uid int64, vid int64) error {
 	var favorite Favorite
-	err := db.Where("uid=?", uid).Where("vid=?", vid).Find(&favorite).Error
+	err := db.Where("uid=?", uid).Where("vid=?", vid).Delete(&favorite).Error
 	if err != nil {
-		return err
-	}
-	if err = db.Delete(&favorite).Error; err != nil {
 		return err
 	}
 	return nil
