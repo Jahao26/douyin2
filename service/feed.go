@@ -59,9 +59,6 @@ func (q *FeedVideoListFlow) prepareData() error {
 
 	for i := range q.videos {
 		is_fav, err = repository.NewFavoriteDao().QueryUidVid(user.Id, q.videos[i].Id)
-		//fmt.Println("************************************************")
-		//fmt.Println(is_fav, err)
-		//fmt.Println("************************************************")
 		newResponse := VideoResponse{
 			Id:            q.videos[i].Id,
 			Author:        user,

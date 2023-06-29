@@ -47,6 +47,15 @@ func (*VideoDAO) GetVideoByUid(uid int64, videoList *[]*Video) error {
 		Find(&videoList).Error
 }
 
+func (*VideoDAO) GetVideoByVid(vid int64) (*Video, error) {
+	var video Video
+	err := db.Model(Video{}).Where("id=?", vid).Find(&video).Error
+	if err != nil {
+		return nil, err
+	}
+	return &video, nil
+}
+
 func (*VideoDAO) GetVideoByLimit(limit int, videoList *[]*Video) error {
 	if videoList == nil {
 		return errors.New("QueryVideoListByUserId videoList is nil")

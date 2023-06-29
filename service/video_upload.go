@@ -88,5 +88,10 @@ func (f *uploadFlow) uploadVideo() error {
 	if err := repository.NewVideoDao().AddVideo(&newVideo); err != nil {
 		return err
 	}
+
+	err = repository.NewUserDao().AddworkCount(f.id)
+	if err != nil {
+		return err
+	}
 	return nil
 }

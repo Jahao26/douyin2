@@ -5,9 +5,8 @@ import (
 )
 
 type Favorite struct {
-	Uid        int64 `gorm:"column:uid;not null" redis:"uid"`
-	VId        int64 `gorm:"column:vid;primary_key;AUTO_INCREMENT" redis:"vid"`
-	IsFavorite bool  `gorm:"column:is_favorite;not null" redis:"-"`
+	Uid int64 `gorm:"column:uid;not null" redis:"uid"`
+	VId int64 `gorm:"column:vid;not null" redis:"vid"`
 }
 
 type FavoriteDAO struct {
@@ -26,9 +25,8 @@ func NewFavoriteDao() *FavoriteDAO {
 
 func (*FavoriteDAO) AddFavorite(uid int64, vid int64) error {
 	newFav := Favorite{
-		Uid:        uid,
-		VId:        vid,
-		IsFavorite: true,
+		Uid: uid,
+		VId: vid,
 	}
 	if err := db.Create(&newFav).Error; err != nil {
 		return err
@@ -58,4 +56,15 @@ func (*FavoriteDAO) QueryUidVid(uid int64, vid int64) (bool, error) {
 		return false, nil
 	}
 	return true, nil
+}
+
+// 通过UID查询喜欢的视频列表
+func (*FavoriteDAO) GetFavoriteByUid(uid int64) (*[]Favorite, error) {
+	// 通过uid查到所有的视频
+	var favList []Favorite
+	err := db.Model(Favorite{}).Where("uid=?", uid).Find(&favList).Error
+	if err != nil {
+		return nil, err
+	}
+	return &favList, nil
 }

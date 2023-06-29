@@ -9,14 +9,13 @@ func QueryUserById(uid int64) (*repository.User, error) {
 	if err != nil {
 		return &repository.User{}, err
 	}
-	//fmt.Println("*******************************************")
-	//fmt.Println("debug name: ", user.Name)
-	//fmt.Println("*******************************************")
 	return &repository.User{
 		Id:            uid,
 		Name:          user.Name,
 		FollowCount:   user.FollowCount,
 		FollowerCount: user.FollowerCount,
 		IsFollow:      user.IsFollow,
+		FavoriteCount: user.FavoriteCount,
+		WorkCount:     user.WorkCount,
 	}, nil
 }

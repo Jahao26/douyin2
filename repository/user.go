@@ -12,6 +12,8 @@ type User struct {
 	FollowCount   int64  `gorm:"column:follow_count;not null" redis:"follow_count"`
 	FollowerCount int64  `gorm:"column:follower_count;not null" redis:"follower_count"`
 	IsFollow      bool   `gorm:"column:is_follow;" redis:"-"`
+	FavoriteCount int64  `gorm:"column:favorite_count;not null" redis:"favorite_count"`
+	WorkCount     int64  `gorm:"column:work_count;not null" redis:"work_count"`
 }
 
 type UserDAO struct {
@@ -88,5 +90,25 @@ func (*UserDAO) RmFollower(id int64) error {
 	if err != nil {
 		panic(err)
 	}
+	return nil
+}
+
+func (*UserDAO) AddworkCount(uid int64) error {
+	db.Model(&User{}).Where("id=?", uid).UpdateColumn("work_count", gorm.Expr("work_count+?", 1))
+	return nil
+}
+
+func (*UserDAO) AddfavoriteCount(uid int64) error {
+	db.Model(&User{}).Where("id=?", uid).UpdateColumn("favorite_count", gorm.Expr("favorite_count+?", 1))
+	return nil
+}
+
+func (*UserDAO) RmworkCount(uid int64) error {
+	db.Model(&User{}).Where("id=?", uid).UpdateColumn("work_count", gorm.Expr("work_count-?", 1))
+	return nil
+}
+
+func (*UserDAO) RmfavoriteCount(uid int64) error {
+	db.Model(&User{}).Where("id=?", uid).UpdateColumn("favorite_count", gorm.Expr("favorite_count-?", 1))
 	return nil
 }

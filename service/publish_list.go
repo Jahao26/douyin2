@@ -17,8 +17,14 @@ type VideoResponse struct {
 
 // List 视频集合
 type List struct {
-	//Videos []*repository.Video `json:"video_list,omitempty"`
 	Videos []*VideoResponse `json:"video_list,omitempty"`
+}
+
+type QueryVideoListByUserIdFlow struct {
+	uid    int64
+	videos []*repository.Video
+
+	videoList *List
 }
 
 func QuaryVideolistByUid(uid int64) (*List, error) {
@@ -27,13 +33,6 @@ func QuaryVideolistByUid(uid int64) (*List, error) {
 
 func NewQueryVideoListByUserIdFlow(uid int64) *QueryVideoListByUserIdFlow {
 	return &QueryVideoListByUserIdFlow{uid: uid}
-}
-
-type QueryVideoListByUserIdFlow struct {
-	uid    int64
-	videos []*repository.Video
-
-	videoList *List
 }
 
 func (q *QueryVideoListByUserIdFlow) Do() (*List, error) {

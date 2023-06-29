@@ -44,7 +44,15 @@ func FavoriteList(c *gin.Context) {
 		})
 	}
 	//通过uid获得用户喜欢的视频列表
-	videolist, err := service.QuaryVideolistByUid(uid)
+	videolist, err := service.FavoriteList(uid)
+	if err != nil {
+		c.JSON(http.StatusOK, VideoListResponse{
+			Response: Response{
+				StatusCode: 1,
+				StatusMsg:  "favorite list failed",
+			},
+		})
+	}
 
 	c.JSON(http.StatusOK, VideoListResponse{
 		Response: Response{

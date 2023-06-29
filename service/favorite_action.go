@@ -37,7 +37,11 @@ func (f *favoriteFlow) favoriteAction() error {
 		if err != nil {
 			return err
 		}
-		// 用户喜欢列表 video+1
+		// 用户喜欢数量加1
+		err = repository.NewUserDao().AddfavoriteCount(f.uid)
+		if err != nil {
+			return err
+		}
 
 	} else { // 如果操作类型是 取消点赞
 		err := repository.NewVideoDao().RmVideoFavorite(f.uid, f.vid) // 通过视频查询到video类
@@ -45,6 +49,10 @@ func (f *favoriteFlow) favoriteAction() error {
 			return err
 		}
 		err = repository.NewFavoriteDao().RmFavorite(f.uid, f.vid)
+		if err != nil {
+			return err
+		}
+		err = repository.NewUserDao().RmfavoriteCount(f.uid)
 		if err != nil {
 			return err
 		}
