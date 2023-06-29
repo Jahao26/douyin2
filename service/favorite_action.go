@@ -28,8 +28,12 @@ func (f *favoriteFlow) Do() error {
 
 func (f *favoriteFlow) favoriteAction() error {
 	if f.action_type == "1" { // 如果操作类型是 点赞
-		// video中的赞数量+1, is_favourite=true
+		// video中的赞数量+1
 		err := repository.NewVideoDao().AddVideoFavorite(f.uid, f.vid) // 通过视频查询到video类
+		if err != nil {
+			return err
+		}
+		err = repository.NewFavoriteDao().AddFavorite(f.uid, f.vid)
 		if err != nil {
 			return err
 		}
@@ -37,6 +41,10 @@ func (f *favoriteFlow) favoriteAction() error {
 
 	} else { // 如果操作类型是 取消点赞
 		err := repository.NewVideoDao().RmVideoFavorite(f.uid, f.vid) // 通过视频查询到video类
+		if err != nil {
+			return err
+		}
+		err = repository.NewFavoriteDao().RmFavorite(f.uid, f.vid)
 		if err != nil {
 			return err
 		}

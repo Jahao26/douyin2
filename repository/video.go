@@ -24,7 +24,7 @@ var videoOnce sync.Once
 
 func NewVideoDao() *VideoDAO { // 单例设计模式：懒汉模式
 	// 这个函数暴露唯一的接口对外使用
-	userOnce.Do(
+	videoOnce.Do(
 		func() {
 			videoDao = &VideoDAO{}
 		})

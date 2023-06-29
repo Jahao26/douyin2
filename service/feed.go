@@ -1,30 +1,30 @@
 package service
 
-import "douyin/repository"
+import (
+	"douyin/repository"
+)
 
 // feed列表
+type FeedVideoListFlow struct {
+	uid       int64
+	videos    []*repository.Video
+	videoList *List
+}
 
 // MaxVideoNum 每次最多返回的视频数量
 const (
 	MaxVideoNum = 30
 )
 
-func QueryFeedVideoList(uid int64) (*List, error) {
-	return NewQueryFeedVideoListFlow(uid).Do()
+func FeedVideoList(uid int64) (*List, error) {
+	return NewFeedVideoListFlow(uid).Do()
 }
 
-func NewQueryFeedVideoListFlow(uid int64) *QueryFeedVideoListFlow {
-	return &QueryFeedVideoListFlow{uid: uid}
+func NewFeedVideoListFlow(uid int64) *FeedVideoListFlow {
+	return &FeedVideoListFlow{uid: uid}
 }
 
-type QueryFeedVideoListFlow struct {
-	uid    int64
-	videos []*repository.Video
-
-	videoList *List
-}
-
-func (q *QueryFeedVideoListFlow) Do() (*List, error) {
+func (q *FeedVideoListFlow) Do() (*List, error) {
 	//所有传入的参数不填也应该给他正常处理
 	q.checkNum()
 
@@ -35,14 +35,14 @@ func (q *QueryFeedVideoListFlow) Do() (*List, error) {
 	return q.videoList, nil
 }
 
-func (q *QueryFeedVideoListFlow) checkNum() {
+func (q *FeedVideoListFlow) checkNum() {
 	//上层通过把userId置零，表示userId不存在或不需要
 	if q.uid > 0 {
 		//这里说明userId是有效的，可以定制性的做一些登录用户的专属视频推荐
 	}
 }
 
-func (q *QueryFeedVideoListFlow) prepareData() error {
+func (q *FeedVideoListFlow) prepareData() error {
 	err := repository.NewVideoDao().GetVideoByLimit(MaxVideoNum, &q.videos)
 	if err != nil {
 		return err
@@ -55,7 +55,13 @@ func (q *QueryFeedVideoListFlow) prepareData() error {
 	//创建一个新的视频列表，长度和查询到的视频列表一致，用来返回给前端
 	newvideolist := make([]*VideoResponse, len(q.videos))
 
+	var is_fav bool
+
 	for i := range q.videos {
+		is_fav, err = repository.NewFavoriteDao().QueryUidVid(user.Id, q.videos[i].Id)
+		//fmt.Println("************************************************")
+		//fmt.Println(is_fav, err)
+		//fmt.Println("************************************************")
 		newResponse := VideoResponse{
 			Id:            q.videos[i].Id,
 			Author:        user,
@@ -63,7 +69,7 @@ func (q *QueryFeedVideoListFlow) prepareData() error {
 			PlayUrl:       q.videos[i].PlayUrl,
 			CoverUrl:      q.videos[i].CoverUrl,
 			FavoriteCount: q.videos[i].FavoriteCount,
-			IsFavorite:    q.videos[i].IsFavorite,
+			IsFavorite:    is_fav,
 		}
 		newvideolist[i] = &newResponse
 	}

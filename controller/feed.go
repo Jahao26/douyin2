@@ -29,7 +29,7 @@ func Feed(c *gin.Context) {
 	}
 	// 获得推荐的视频列表，uid用于后续判断用户是否点赞
 	uid := userid.(int64)
-	videolist, err := service.QueryFeedVideoList(uid)
+	videolist, err := service.FeedVideoList(uid)
 
 	c.JSON(http.StatusOK, FeedResponse{
 		Response:  Response{StatusCode: 0},
