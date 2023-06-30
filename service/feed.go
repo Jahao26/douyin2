@@ -2,6 +2,7 @@ package service
 
 import (
 	"douyin/repository"
+	"fmt"
 )
 
 // feed列表
@@ -59,9 +60,14 @@ func (q *FeedVideoListFlow) prepareData() error {
 
 	for i := range q.videos {
 		is_fav, err = repository.NewFavoriteDao().QueryUidVid(user.Id, q.videos[i].Id)
+		// 通过保存的视频的UID找到作者信息，返回给feed列表
+		videoUserinfo, _ := repository.NewUserDao().QueryById(q.videos[i].Uid)
+		fmt.Println("*****************")
+		fmt.Println(user.Id)
+		fmt.Println(videoUserinfo.Id)
 		newResponse := VideoResponse{
 			Id:            q.videos[i].Id,
-			Author:        user,
+			Author:        videoUserinfo,
 			CommentCount:  q.videos[i].CommentCount,
 			PlayUrl:       q.videos[i].PlayUrl,
 			CoverUrl:      q.videos[i].CoverUrl,

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"douyin/service"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -19,6 +20,11 @@ func RelationAction(c *gin.Context) {
 
 	if userid, exist := c.Get("uid"); exist {
 		uid := userid.(int64)
+		fmt.Println("**********************")
+		fmt.Println(touserid)
+		fmt.Println(to_user_id)
+		fmt.Println(userid)
+		fmt.Println(uid)
 		if err := service.RelationAction(uid, to_user_id); err != nil {
 			panic(err)
 		}
