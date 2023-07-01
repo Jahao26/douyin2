@@ -21,7 +21,7 @@ func Feed(c *gin.Context) {
 			Response: Response{StatusCode: 1, StatusMsg: "failed to feed"},
 		})
 	}
-	_, err := service.QueryUserById(userid.(int64))
+	_, err := service.UserInfo(userid.(int64))
 	if err != nil {
 		c.JSON(http.StatusOK, FeedResponse{
 			Response: Response{StatusCode: 1, StatusMsg: err.Error()},

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"douyin/repository"
 	"douyin/service"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -12,13 +11,13 @@ import (
 )
 
 type VideoResponse struct {
-	Id            int64            `json:"id,omitempty"`
-	Author        *repository.User `json:"author"`
-	PlayUrl       string           `json:"play_url" json:"play_url,omitempty"`
-	CoverUrl      string           `json:"cover_url,omitempty"`
-	FavoriteCount int64            `json:"favorite_count,omitempty"`
-	CommentCount  int64            `json:"comment_count,omitempty"`
-	IsFavorite    bool             `json:"is_favorite,omitempty"`
+	Id            int64                `json:"id,omitempty"`
+	Author        service.UserInfoPage `json:"author,omitempty"`
+	PlayUrl       string               `json:"play_url" json:"play_url,omitempty"`
+	CoverUrl      string               `json:"cover_url,omitempty"`
+	FavoriteCount int64                `json:"favorite_count,omitempty"`
+	CommentCount  int64                `json:"comment_count,omitempty"`
+	IsFavorite    bool                 `json:"is_favorite,omitempty"`
 }
 
 type VideoListResponse struct {
@@ -75,8 +74,8 @@ func Publish(c *gin.Context) {
 	// 将视频信息存储到数据库 10.16.43.102
 	// 10.16.23.66
 	// 具体IP为服务器IP，localhost和127.0.0.1不能解析，原因未知
-	videoPath := "http://10.16.23.66:8080/static/" + finalName
-	figPath := "http://10.16.23.66:8080/static/" + coverPath[9:]
+	videoPath := "http://10.16.43.102:8080/static/" + finalName
+	figPath := "http://10.16.43.102:8080/static/" + coverPath[9:]
 	if err := service.UploadVideo(uid, videoPath, figPath); err != nil {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 1,
@@ -96,11 +95,6 @@ func Publish(c *gin.Context) {
 func PublishList(c *gin.Context) {
 	userid, exist := c.Get("uid")
 	if !exist {
-		return
-	}
-	uid := userid.(int64)
-	_, err := service.QueryUserById(uid)
-	if err != nil {
 		c.JSON(http.StatusOK, VideoListResponse{
 			Response: Response{
 				StatusCode: 1,
@@ -109,8 +103,9 @@ func PublishList(c *gin.Context) {
 			VideoList: []*service.VideoResponse{},
 		})
 	}
+	uid := userid.(int64)
 	//通过uid获得用户发布的视频列表
-	videolist, err := service.QuaryVideolistByUid(uid)
+	videolist, _ := service.QuaryVideolistByUid(uid)
 
 	c.JSON(http.StatusOK, VideoListResponse{
 		Response: Response{

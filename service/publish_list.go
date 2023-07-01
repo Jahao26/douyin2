@@ -6,13 +6,13 @@ import (
 )
 
 type VideoResponse struct {
-	Id            int64            `json:"id,omitempty"`
-	Author        *repository.User `json:"author"`
-	PlayUrl       string           `json:"play_url,omitempty"`
-	CoverUrl      string           `json:"cover_url,omitempty"`
-	FavoriteCount int64            `json:"favorite_count,omitempty"`
-	CommentCount  int64            `json:"comment_count,omitempty"`
-	IsFavorite    bool             `json:"is_favorite,omitempty"`
+	Id            int64         `json:"id,omitempty"`
+	Author        *UserInfoPage `json:"author,omitempty"`
+	PlayUrl       string        `json:"play_url,omitempty"`
+	CoverUrl      string        `json:"cover_url,omitempty"`
+	FavoriteCount int64         `json:"favorite_count,omitempty"`
+	CommentCount  int64         `json:"comment_count,omitempty"`
+	IsFavorite    bool          `json:"is_favorite,omitempty"`
 }
 
 // List 视频集合
@@ -62,7 +62,8 @@ func (q *QueryVideoListByUserIdFlow) packData() error {
 	if err != nil {
 		return err
 	}
-	user, err := repository.NewUserDao().QueryById(q.uid)
+	// user, err := repository.NewUserDao().QueryById(q.uid)
+	user, err := UserInfo(q.uid)
 
 	//创建一个新的视频列表，长度和查询到的视频列表一致，用来返回给前端
 	newvideolist := make([]*VideoResponse, len(q.videos))

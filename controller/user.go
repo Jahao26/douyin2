@@ -3,23 +3,11 @@ package controller
 import (
 	"douyin/middleware"
 	"douyin/service"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 var userIdSequence = int64(1)
-
-type UserInfoPage struct {
-	// 个人主页情况
-	Id            int64  `json:"id,omitempty"`
-	Name          string `json:"name,omitempty"`
-	FollowCount   int64  `json:"follow_count,omitempty"`
-	FollowerCount int64  `json:"follower_count,omitempty"`
-	IsFollow      bool   `json:"is_follow,omitempty"`
-	FavoriteCount int64  `json:"favorite_count,omitempty"`
-	WorkCount     int64  `json:"work_count,omitempty"`
-}
 
 type UserLoginResponse struct {
 	Response
@@ -29,7 +17,7 @@ type UserLoginResponse struct {
 
 type UserResponse struct {
 	Response
-	User *UserInfoPage `json:"user"`
+	User *service.UserInfoPage `json:"user"`
 }
 
 func Register(c *gin.Context) {
@@ -88,25 +76,15 @@ func UserInfo(c *gin.Context) {
 	userid, exist := c.Get("uid")
 	if exist {
 		uid := userid.(int64)
-		user, err := service.QueryUserById(uid)
+		userinfo, err := service.UserInfo(uid)
 		if err != nil {
 			c.JSON(http.StatusOK, UserResponse{Response: Response{StatusCode: 1, StatusMsg: err.Error()}})
 			return
-		} else {
-			fmt.Println(user.Id, user.Name, user.FollowerCount)
 		}
 
 		c.JSON(http.StatusOK, UserResponse{
 			Response: Response{StatusCode: 0},
-			User: &UserInfoPage{
-				Id:            uid,
-				Name:          user.Name,
-				FollowCount:   user.FollowCount,
-				FollowerCount: user.FollowerCount,
-				IsFollow:      user.IsFollow,
-				FavoriteCount: user.FavoriteCount,
-				WorkCount:     user.WorkCount,
-			},
+			User:     userinfo,
 		})
 	}
 }

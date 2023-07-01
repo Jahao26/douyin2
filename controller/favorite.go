@@ -33,7 +33,7 @@ func FavoriteList(c *gin.Context) {
 		return
 	}
 	uid := userid.(int64)
-	_, err := service.QueryUserById(uid)
+	_, err := service.UserInfo(uid)
 	if err != nil {
 		c.JSON(http.StatusOK, VideoListResponse{
 			Response: Response{

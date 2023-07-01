@@ -48,7 +48,7 @@ func (q *FavoriteListFlow) packData() error {
 
 	for _, fav := range *favList { // 获取喜欢视频列表的视频及作者信息
 		video, _ := repository.NewVideoDao().GetVideoByVid(fav.VId)
-		author, _ := repository.NewUserDao().QueryById(fav.Uid)
+		author, _ := UserInfo(fav.Uid)
 
 		newResponse := VideoResponse{
 			Id:            video.Id,

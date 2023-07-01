@@ -1,5 +1,11 @@
 # 字节青训营项目——极简抖音
 
+## Before run
+
+```shell
+mkdir public
+```
+
 ## Compile and Run
 
 ```shell
