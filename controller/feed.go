@@ -17,23 +17,31 @@ type FeedResponse struct {
 func Feed(c *gin.Context) {
 	userid, exist := c.Get("uid")
 	if !exist {
+		println("****2***")
+		videolist, _ := service.FeedVideoList(int64(0))
 		c.JSON(http.StatusOK, FeedResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "failed to feed"},
+			Response:  Response{StatusCode: 0},
+			VideoList: videolist.Videos,
+			NextTime:  time.Now().Unix(),
 		})
-	}
-	_, err := service.UserInfo(userid.(int64))
-	if err != nil {
-		c.JSON(http.StatusOK, FeedResponse{
-			Response: Response{StatusCode: 1, StatusMsg: err.Error()},
-		})
-	}
-	// 获得推荐的视频列表，uid用于后续判断用户是否点赞
-	uid := userid.(int64)
-	videolist, err := service.FeedVideoList(uid)
+		//c.JSON(http.StatusOK, FeedResponse{
+		//	Response: Response{StatusCode: 1, StatusMsg: "failed to feed"},
+		//})
+	} else {
+		_, err := service.UserInfo(userid.(int64))
+		if err != nil {
+			c.JSON(http.StatusOK, FeedResponse{
+				Response: Response{StatusCode: 1, StatusMsg: err.Error()},
+			})
+		}
+		// 获得推荐的视频列表，uid用于后续判断用户是否点赞
+		uid := userid.(int64)
+		videolist, err := service.FeedVideoList(uid)
 
-	c.JSON(http.StatusOK, FeedResponse{
-		Response:  Response{StatusCode: 0},
-		VideoList: videolist.Videos,
-		NextTime:  time.Now().Unix(),
-	})
+		c.JSON(http.StatusOK, FeedResponse{
+			Response:  Response{StatusCode: 0},
+			VideoList: videolist.Videos,
+			NextTime:  time.Now().Unix(),
+		})
+	}
 }

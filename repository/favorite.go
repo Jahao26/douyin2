@@ -59,7 +59,7 @@ func (*FavoriteDAO) QueryUidVid(uid int64, vid int64) (bool, error) {
 func (*FavoriteDAO) GetFavoriteByUid(uid int64) (*[]Favorite, error) {
 	// 通过uid查到所有的视频
 	var favList []Favorite
-	err := db.Model(Favorite{}).Where("uid=?", uid).Find(&favList).Error
+	err := db.Model(&Favorite{}).Where("uid=?", uid).Find(&favList).Error
 	if err != nil {
 		return nil, err
 	}

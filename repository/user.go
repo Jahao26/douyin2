@@ -62,33 +62,37 @@ func (*UserDAO) QueryById(id int64) (*User, error) {
 
 func (*UserDAO) AddFollow(id int64) error {
 	// 根据ID添加关注
-	err := db.Model(&User{}).Where("id=?", id).UpdateColumn("follow_count", gorm.Expr("follow_count+?", 1))
+	err := db.Model(&User{}).Where("id=?", id).UpdateColumn("follow_count", gorm.Expr("follow_count+?", 1)).Error
 	if err != nil {
-		panic(err)
+		//panic(err)
+		return err
 	}
 	return nil
 }
 
 func (*UserDAO) RmFollow(id int64) error {
-	err := db.Model(&User{}).Where("id=?", id).UpdateColumn("follow_count", gorm.Expr("follow_count-?", 1))
+	err := db.Model(&User{}).Where("id=?", id).UpdateColumn("follow_count", gorm.Expr("follow_count-?", 1)).Error
 	if err != nil {
-		panic(err)
+		//panic(err)
+		return err
 	}
 	return nil
 }
 
 func (*UserDAO) AddFollower(id int64) error {
-	err := db.Model(&User{}).Where("id=?", id).UpdateColumn("follower_count", gorm.Expr("follower_count+?", 1))
+	err := db.Model(&User{}).Where("id=?", id).UpdateColumn("follower_count", gorm.Expr("follower_count+?", 1)).Error
 	if err != nil {
-		panic(err)
+		//panic(err)
+		return err
 	}
 	return nil
 }
 
 func (*UserDAO) RmFollower(id int64) error {
-	err := db.Model(&User{}).Where("id=?", id).UpdateColumn("follower_count", gorm.Expr("follower_count-?", 1))
+	err := db.Model(&User{}).Where("id=?", id).UpdateColumn("follower_count", gorm.Expr("follower_count-?", 1)).Error
 	if err != nil {
-		panic(err)
+		//panic(err)
+		return err
 	}
 	return nil
 }
