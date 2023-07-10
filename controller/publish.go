@@ -74,8 +74,8 @@ func Publish(c *gin.Context) {
 	// 将视频信息存储到数据库 10.16.43.102
 	// 10.16.23.66
 	// 具体IP为服务器IP，localhost和127.0.0.1不能解析，原因未知
-	videoPath := "http://10.16.23.66:8080/static/" + finalName
-	figPath := "http://10.16.23.66:8080/static/" + coverPath[9:]
+	videoPath := "http://10.20.131.29:8080/static/" + finalName
+	figPath := "http://10.20.131.29:8080/static/" + coverPath[9:]
 	if err := service.UploadVideo(uid, videoPath, figPath); err != nil {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 1,

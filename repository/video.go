@@ -77,3 +77,13 @@ func (*VideoDAO) RmVideoFavorite(uid int64, vid int64) error {
 	//db.Model(&Video{}).Where("id=?", vid).Where("uid=?", uid).Update("is_favorite", false)
 	return nil
 }
+
+func (*VideoDAO) AddVideoComment(vid int64) error {
+	db.Model(&Video{}).Where("id=?", vid).UpdateColumn("comment_count", gorm.Expr("comment_count+?", 1))
+	return nil
+}
+
+func (*VideoDAO) RmVideoComment(vid int64) error {
+	db.Model(&Video{}).Where("id=?", vid).UpdateColumn("comment_count", gorm.Expr("comment_count-?", 1))
+	return nil
+}
