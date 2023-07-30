@@ -16,9 +16,6 @@ type FeedResponse struct {
 // Feed same demo video list for every request
 func Feed(c *gin.Context) {
 	userid, exist := c.Get("uid")
-	println("****FEED****")
-	println(userid)
-	println("****")
 	if !exist {
 		println("****user not exist!****")
 		videolist, _ := service.FeedVideoList(int64(0))
