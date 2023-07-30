@@ -56,8 +56,8 @@ func (q *FeedVideoListFlow) prepareData() error {
 	}
 	//如果用户为登录状态，则更新该视频是否被该用户点赞的状态
 	//此处预留一个部分用于更新视频状态
-
-	user, err := repository.NewUserDao().QueryById(q.uid)
+	//user 累赘
+	//user, err := repository.NewUserDao().QueryById(q.uid)
 
 	//创建一个新的视频列表，长度和查询到的视频列表一致，用来返回给前端
 	newvideolist := make([]*VideoResponse, len(q.videos))
@@ -65,9 +65,13 @@ func (q *FeedVideoListFlow) prepareData() error {
 	var is_fav bool
 
 	for i := range q.videos {
-		is_fav, err = repository.NewFavoriteDao().QueryUidVid(user.Id, q.videos[i].Id)
+		is_fav, err = repository.NewFavoriteDao().QueryUidVid(q.uid, q.videos[i].Id)
 		// 通过保存的视频的UID找到作者信息，返回给feed列表
 		author, _ := UserInfo(q.videos[i].Uid)
+		is_rala, _ := repository.NewRalationDao().QuaryRalation(q.uid, author.Id)
+
+		author.IsFollow = is_rala
+
 		// videoUserinfo, _ := repository.NewUserDao().QueryById(q.videos[i].Uid)
 		newResponse := VideoResponse{
 			Id:            q.videos[i].Id,

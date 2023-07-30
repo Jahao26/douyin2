@@ -35,8 +35,13 @@ func Publish(c *gin.Context) {
 			StatusMsg:  "Uid get error",
 		})
 	}
+	var uid int64
+	if userid != nil {
+		uid = userid.(int64)
+	} else {
+		uid = int64(0)
+	}
 
-	uid := userid.(int64)
 	// FormFile源码：通过Request.ParseMultipartForm对上传文件参数进行解析，然后调用Request.FormFile获取文件头FileHeader
 	// 获得上传的文件
 	data, err := c.FormFile("data")
@@ -72,10 +77,10 @@ func Publish(c *gin.Context) {
 		})
 	}
 	// 将视频信息存储到数据库 10.16.43.102
-	// 10.16.23.66
+	// 10.16.71.180
 	// 具体IP为服务器IP，localhost和127.0.0.1不能解析，原因未知
-	videoPath := "http://10.20.131.29:8080/static/" + finalName
-	figPath := "http://10.20.131.29:8080/static/" + coverPath[9:]
+	videoPath := "http://10.16.71.180:8080/static/" + finalName
+	figPath := "http://10.16.71.180:8080/static/" + coverPath[9:]
 	if err := service.UploadVideo(uid, videoPath, figPath); err != nil {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 1,
@@ -103,7 +108,12 @@ func PublishList(c *gin.Context) {
 			VideoList: []*service.VideoResponse{},
 		})
 	}
-	uid := userid.(int64)
+	var uid int64
+	if userid != nil {
+		uid = userid.(int64)
+	} else {
+		uid = int64(0)
+	}
 	//通过uid获得用户发布的视频列表
 	videolist, _ := service.QuaryVideolistByUid(uid)
 

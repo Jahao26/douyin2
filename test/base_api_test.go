@@ -11,7 +11,7 @@ import (
 func TestFeed(t *testing.T) {
 	e := newExpect(t)
 
-	feed02Resp := e.GET("/douyin/feed/").Expect().Status(http.StatusOK).JSON().Object()
+	feedResp := e.GET("/douyin/feed/").Expect().Status(http.StatusOK).JSON().Object()
 	feedResp.Value("status_code").Number().Equal(0)
 	feedResp.Value("video_list").Array().Length().Gt(0)
 
@@ -70,9 +70,9 @@ func TestPublish(t *testing.T) {
 
 	publishResp := e.POST("/douyin/publish/action/").
 		WithMultipart().
-		WithFile("data", "../public/bear.mp4").
+		WithFile("data", "../public/1_1688542448_221226230029369105.mp4").
 		WithFormField("token", token).
-		WithFormField("title", "Bear").
+		WithFormField("title", "1_1688542448_221226230029369105").
 		Expect().
 		Status(http.StatusOK).
 		JSON().Object()
