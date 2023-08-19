@@ -17,9 +17,7 @@ type FeedResponse struct {
 func Feed(c *gin.Context) {
 	userid, exist := c.Get("uid")
 	if !exist {
-		println("****user not exist!****")
 		videolist, _ := service.FeedVideoList(int64(0))
-		println(videolist.Videos[1].PlayUrl)
 		c.JSON(http.StatusOK, FeedResponse{
 			Response:  Response{StatusCode: 0},
 			VideoList: videolist.Videos,
@@ -31,7 +29,6 @@ func Feed(c *gin.Context) {
 	} else {
 		_, err := service.UserInfo(userid.(int64))
 		if err != nil {
-			println("****lalalal")
 			c.JSON(http.StatusOK, FeedResponse{
 				Response: Response{StatusCode: 1, StatusMsg: err.Error()},
 			})

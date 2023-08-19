@@ -12,9 +12,9 @@ func main() {
 	if err := repository.InitDB(); err != nil {
 		os.Exit(-1)
 	}
-	//if err := repository.InitRedis(); err != nil {
-	//	os.Exit(-1)
-	//}
+	if err := repository.InitRedis(); err != nil {
+		os.Exit(-1)
+	}
 	r := gin.Default()
 
 	initRouter(r)

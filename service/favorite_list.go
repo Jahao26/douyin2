@@ -2,7 +2,6 @@ package service
 
 import (
 	"douyin/repository"
-	"errors"
 )
 
 type FavoriteListFlow struct {
@@ -31,9 +30,10 @@ func (q *FavoriteListFlow) Do() (*List, error) {
 
 func (q *FavoriteListFlow) checkNum() error {
 	//检查userId是否存在
-	_, err := repository.NewUserDao().QueryById(q.uid)
-	if err != nil {
-		return errors.New("用户不存在")
+	if _, err := repository.GetUsr_redis(q.uid); err != nil {
+		if _, err = repository.NewUserDao().QueryById(q.uid); err != nil {
+			return err
+		}
 	}
 	return nil
 }

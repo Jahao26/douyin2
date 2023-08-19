@@ -69,9 +69,17 @@ func (f *uploadFlow) Do() error {
 
 func (f *uploadFlow) uploadVideo() error {
 	// 查询uid对应的姓名
-	user, err := repository.NewUserDao().QueryById(f.id)
+	user, err := repository.GetUsr_redis(f.id)
 	if err != nil {
-		return err
+		// if userinfo we are looking for is not exist in REDIS
+		// get info from MYSQL database
+		user, err = repository.NewUserDao().QueryById(f.id)
+		if err != nil {
+			return err
+		}
+		if err = repository.AddUsrInfo_redis(user); err != nil {
+			return err
+		}
 	}
 
 	// 将视频信息放入数据库

@@ -13,7 +13,7 @@ type Video struct {
 	CoverUrl      string `gorm:"column:coverurl;type:varchar(255);not null" redis:"coverurl"`
 	FavoriteCount int64  `gorm:"column:favorite_count;not null" redis:"favorite_count"`
 	CommentCount  int64  `gorm:"column:comment_count;not null" redis:"comment_count"`
-	IsFavorite    bool   `gorm:"column:is_favorite;not null" redis:"-"`
+	IsFavorite    bool   `gorm:"column:is_favorite;not null" redis:"is_favorite"`
 }
 
 type VideoDAO struct {
@@ -39,7 +39,6 @@ func (*VideoDAO) AddVideo(video *Video) error {
 }
 
 func (*VideoDAO) GetVideoByUid(uid int64, videoList *[]*Video) error {
-
 	if videoList == nil {
 		return errors.New("QueryVideoListByUserId videoList is nil")
 	}
@@ -66,7 +65,7 @@ func (*VideoDAO) GetVideoByLimit(limit int, videoList *[]*Video) error {
 	return nil
 }
 
-func (*VideoDAO) AddVideoFavorite(uid int64, vid int64) error { // 在增加视频喜欢的同时，将uid-vid-isfavorite更改
+func (*VideoDAO) AddVideoFavorite(vid int64) error { // 在增加视频喜欢的同时，将uid-vid-isfavorite更改
 	db.Model(&Video{}).Where("id=?", vid).UpdateColumn("favorite_count", gorm.Expr("favorite_count+?", 1))
 	//db.Model(&Video{}).Where("id=?", vid).Where("uid=?", uid).Update("is_favorite", true)
 	return nil

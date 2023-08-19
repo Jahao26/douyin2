@@ -71,8 +71,6 @@ func Login(c *gin.Context) {
 }
 
 func UserInfo(c *gin.Context) {
-	// 因为登录仅获取id和name，Userinfo获取其他关注和粉丝信息
-	// userid := c.Query("user_id")
 	userid, exist := c.Get("uid")
 	if exist {
 		uid := userid.(int64)
@@ -81,7 +79,6 @@ func UserInfo(c *gin.Context) {
 			c.JSON(http.StatusOK, UserResponse{Response: Response{StatusCode: 1, StatusMsg: err.Error()}})
 			return
 		}
-
 		c.JSON(http.StatusOK, UserResponse{
 			Response: Response{StatusCode: 0},
 			User:     userinfo,

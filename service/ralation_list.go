@@ -2,7 +2,6 @@ package service
 
 import (
 	"douyin/repository"
-	"errors"
 )
 
 // userList 视频集合
@@ -36,9 +35,10 @@ func (q *RalationListFlow) followDo() (*userList, error) {
 
 func (q *RalationListFlow) followChecknum() error {
 	//检查userId是否存在
-	_, err := repository.NewUserDao().QueryById(q.uid)
-	if err != nil {
-		return errors.New("用户不存在")
+	if _, err := repository.GetUsr_redis(q.uid); err != nil {
+		if _, err = repository.NewUserDao().QueryById(q.uid); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -79,9 +79,10 @@ func (q *RalationListFlow) Do() (*userList, error) {
 
 func (q *RalationListFlow) checkNum() error {
 	//检查userId是否存在
-	_, err := repository.NewUserDao().QueryById(q.uid)
-	if err != nil {
-		return errors.New("用户不存在")
+	if _, err := repository.GetUsr_redis(q.uid); err != nil {
+		if _, err = repository.NewUserDao().QueryById(q.uid); err != nil {
+			return err
+		}
 	}
 	return nil
 }

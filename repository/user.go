@@ -11,7 +11,7 @@ type User struct {
 	Password      string `gorm:"column:password;type:varchar(100);not null" redis:"password"`
 	FollowCount   int64  `gorm:"column:follow_count;not null" redis:"follow_count"`
 	FollowerCount int64  `gorm:"column:follower_count;not null" redis:"follower_count"`
-	IsFollow      bool   `gorm:"column:is_follow;" redis:"-"`
+	IsFollow      bool   `gorm:"column:is_follow;" redis:"is_follow"`
 	FavoriteCount int64  `gorm:"column:favorite_count;not null" redis:"favorite_count"`
 	WorkCount     int64  `gorm:"column:work_count;not null" redis:"work_count"`
 }

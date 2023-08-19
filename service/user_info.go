@@ -37,9 +37,18 @@ func (f *InfoFlow) Do() (*UserInfoPage, error) {
 }
 
 func (f *InfoFlow) userInfo() (*UserInfoPage, error) {
-	user, err := repository.NewUserDao().QueryById(f.uid)
+	// Get Userinfo from Redis
+	user, err := repository.GetUsr_redis(f.uid)
 	if err != nil {
-		return nil, err
+		// if userinfo we are looking for is not exist in REDIS
+		// get info from MYSQL database
+		user, err = repository.NewUserDao().QueryById(f.uid)
+		if err != nil {
+			return nil, err
+		}
+		if err = repository.AddUsrInfo_redis(user); err != nil {
+			return nil, err
+		}
 	}
 	newInfoPage := UserInfoPage{
 		Id:            user.Id,
@@ -52,19 +61,3 @@ func (f *InfoFlow) userInfo() (*UserInfoPage, error) {
 	}
 	return &newInfoPage, nil
 }
-
-//func QueryUserById(uid int64) (*repository.User, error) {
-//	user, err := repository.NewUserDao().QueryById(uid)
-//	if err != nil {
-//		return &repository.User{}, err
-//	}
-//	return &repository.User{
-//		Id:            uid,
-//		Name:          user.Name,
-//		FollowCount:   user.FollowCount,
-//		FollowerCount: user.FollowerCount,
-//		IsFollow:      user.IsFollow,
-//		FavoriteCount: user.FavoriteCount,
-//		WorkCount:     user.WorkCount,
-//	}, nil
-//}

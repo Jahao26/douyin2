@@ -2,7 +2,6 @@ package service
 
 import (
 	"douyin/repository"
-	"errors"
 )
 
 type VideoResponse struct {
@@ -47,9 +46,10 @@ func (q *QueryVideoListByUserIdFlow) Do() (*List, error) {
 
 func (q *QueryVideoListByUserIdFlow) checkNum() error {
 	//检查userId是否存在
-	_, err := repository.NewUserDao().QueryById(q.uid)
-	if err != nil {
-		return errors.New("用户不存在")
+	if _, err := repository.GetUsr_redis(q.uid); err != nil {
+		if _, err = repository.NewUserDao().QueryById(q.uid); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -62,8 +62,8 @@ func (q *QueryVideoListByUserIdFlow) packData() error {
 	if err != nil {
 		return err
 	}
-	// user, err := repository.NewUserDao().QueryById(q.uid)
-	user, err := UserInfo(q.uid)
+
+	userInfo, err := UserInfo(q.uid) // need Author info
 
 	//创建一个新的视频列表，长度和查询到的视频列表一致，用来返回给前端
 	newvideolist := make([]*VideoResponse, len(q.videos))
@@ -71,7 +71,7 @@ func (q *QueryVideoListByUserIdFlow) packData() error {
 	for i := range q.videos {
 		newResponse := VideoResponse{
 			Id:            q.videos[i].Id,
-			Author:        user,
+			Author:        userInfo,
 			CommentCount:  q.videos[i].CommentCount,
 			PlayUrl:       q.videos[i].PlayUrl,
 			CoverUrl:      q.videos[i].CoverUrl,
