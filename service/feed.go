@@ -2,6 +2,7 @@ package service
 
 import (
 	"douyin/repository"
+	"fmt"
 )
 
 // feed列表
@@ -9,13 +10,6 @@ type FeedVideoListFlow struct {
 	uid       int64
 	videos    []*repository.Video
 	videoList *List
-}
-
-var DemoUser = UserInfoPage{
-	Id:            99,
-	Name:          "TestUser",
-	FollowCount:   99,
-	FollowerCount: 99,
 }
 
 // MaxVideoNum 每次最多返回的视频数量
@@ -50,18 +44,19 @@ func (q *FeedVideoListFlow) checkNum() {
 }
 
 func (q *FeedVideoListFlow) prepareData() error {
+	// 重新加载热点数据
+	if err := repository.Reload_redis(q.uid, MaxVideoNum, &q.videos); err != nil {
+		return err
+	}
+
 	err := repository.NewVideoDao().GetVideoByLimit(MaxVideoNum, &q.videos)
 	if err != nil {
 		return err
 	}
-	//如果用户为登录状态，则更新该视频是否被该用户点赞的状态
-	//此处预留一个部分用于更新视频状态
-	//user 累赘
-	//user, err := repository.NewUserDao().QueryById(q.uid)
 
 	//创建一个新的视频列表，长度和查询到的视频列表一致，用来返回给前端
 	newvideolist := make([]*VideoResponse, len(q.videos))
-
+	var vidList []int64
 	var is_fav bool
 
 	for i := range q.videos {
@@ -72,7 +67,6 @@ func (q *FeedVideoListFlow) prepareData() error {
 
 		author.IsFollow = is_rala
 
-		// videoUserinfo, _ := repository.NewUserDao().QueryById(q.videos[i].Uid)
 		newResponse := VideoResponse{
 			Id:            q.videos[i].Id,
 			Author:        author,
@@ -83,7 +77,12 @@ func (q *FeedVideoListFlow) prepareData() error {
 			IsFavorite:    is_fav,
 		}
 		newvideolist[i] = &newResponse
+		vidList = append(vidList, q.videos[i].Id)
 	}
 	q.videoList = &List{Videos: newvideolist}
+	//每次加载完视频都会默认看完了这些视频
+	if err := repository.StoreVidIntoRedis(q.uid, vidList); err != nil {
+		fmt.Println("Error in Add vid into Redis")
+	}
 	return nil
 }

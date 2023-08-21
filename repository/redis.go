@@ -13,16 +13,19 @@ var rdb1 *redis.Client // 存储视频数据
 var rdb2 *redis.Client //
 
 func InitRedis() error {
+	// rdb0存放用户基本信息
 	rdb0 = redis.NewClient(&redis.Options{
 		Addr:     "60.204.170.108:6379",
 		Password: "",
 		DB:       0,
 	})
+	// rdb1存放视频缓存信息
 	rdb1 = redis.NewClient(&redis.Options{
 		Addr:     "60.204.170.108:6379",
 		Password: "",
 		DB:       1,
 	})
+	// rdb2存放用户历史观看信息
 	rdb2 = redis.NewClient(&redis.Options{
 		Addr:     "60.204.170.108:6379",
 		Password: "",

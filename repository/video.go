@@ -2,7 +2,10 @@ package repository
 
 import (
 	"errors"
+	"fmt"
+	"github.com/go-redis/redis/v8"
 	"gorm.io/gorm"
+	"strconv"
 	"sync"
 )
 
@@ -59,7 +62,7 @@ func (*VideoDAO) GetVideoByLimit(limit int, videoList *[]*Video) error {
 	if videoList == nil {
 		return errors.New("QueryVideoListByUserId videoList is nil")
 	}
-	if err := db.Limit(limit).Find(&videoList).Error; err != nil {
+	if err := db.Order("RAND()").Limit(limit).Find(&videoList).Error; err != nil {
 		return err
 	}
 	return nil
@@ -84,5 +87,45 @@ func (*VideoDAO) AddVideoComment(vid int64) error {
 
 func (*VideoDAO) RmVideoComment(vid int64) error {
 	db.Model(&Video{}).Where("id=?", vid).UpdateColumn("comment_count", gorm.Expr("comment_count-?", 1))
+	return nil
+}
+
+func (*VideoDAO) GetHotVideos(uid int64, limit int64, videoList *[]*Video) error { // 获取前limit个不重复的视频数据,存放在videolist中
+	var visitedVideos []string
+	key := fmt.Sprintf("user:%d", uid)
+	if err := rdb2.SMembers(c, key).ScanSlice(&visitedVideos); err != nil {
+		return err
+	}
+
+	// 构建查询
+	query := db.Model(&Video{}).Where("id NOT IN (?)", visitedVideos).
+		Order("favorite_count + comment_count DESC").
+		Limit(int(limit)).Find(videoList)
+
+	if query.Error != nil {
+		return query.Error
+	}
+
+	return nil
+}
+
+func (*VideoDAO) GetNewVideos(limit int64, videoList *[]*Video) error { // 获取不在redis中的视频
+	key := fmt.Sprintf("user:*")
+	vidList, err := rdb2.SMembers(c, key).Result()
+	if err != nil && err != redis.Nil {
+		return err
+	}
+
+	var excludedIDs []int64
+	for _, idStr := range vidList {
+		id, _ := strconv.ParseInt(idStr, 10, 64)
+		excludedIDs = append(excludedIDs, id)
+	}
+
+	query := db.Not(excludedIDs).Limit(int(limit)).Find(&videoList)
+	if query.Error != nil {
+		return query.Error
+	}
+
 	return nil
 }
