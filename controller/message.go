@@ -1,64 +1,65 @@
 package controller
 
 import (
+	"douyin/service"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
-var tempChat = map[string][]Message{}
-
-var messageIdSequence = int64(1)
+//var tempChat = map[string][]Message{}
+//
+//var messageIdSequence = int64(1)
 
 type ChatResponse struct {
 	Response
-	MessageList []Message `json:"message_list"`
+	MessageList []*service.NewMassage `json:"message_list,omitempty"`
 }
 
 // MessageAction no practical effect, just check if token is valid
 func MessageAction(c *gin.Context) {
-	c.JSON(http.StatusOK, Response{StatusCode: 0})
-	////token := c.Query("token")
-	//toUserId := c.Query("to_user_id")
-	//content := c.Query("content")
-	//
-	//if userid, exist := c.Get("uid"); exist {
-	//	userIdB, _ := strconv.Atoi(toUserId)
-	//	uid := userid.(int64)
-	//	chatKey := genChatKey(uid, int64(userIdB))
-	//
-	//	atomic.AddInt64(&messageIdSequence, 1)
-	//	curMessage := Message{
-	//		Id:         messageIdSequence,
-	//		Content:    content,
-	//		CreateTime: time.Now().Format(time.Kitchen),
-	//	}
-	//
-	//	if messages, exist := tempChat[chatKey]; exist {
-	//		tempChat[chatKey] = append(messages, curMessage)
-	//	} else {
-	//		tempChat[chatKey] = []Message{curMessage}
-	//	}
-	//	c.JSON(http.StatusOK, Response{StatusCode: 0})
-	//} else {
-	//	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
-	//}
+	toUid := c.Query("to_user_id")
+	actionType := c.Query("action_type")
+	content := c.Query("content")
+
+	if userId, exist := c.Get("uid"); exist {
+		uid := userId.(int64)
+		to_uid, _ := strconv.ParseInt(toUid, 10, 64)
+		// 发送消息时，保存消息记录，返回响应
+		if err := service.MassageAction(uid, to_uid, actionType, content); err != nil {
+			panic(err)
+		}
+		c.JSON(http.StatusOK, Response{StatusCode: 0})
+	} else {
+		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	}
 }
 
 // MessageChat all users have same follow list
 func MessageChat(c *gin.Context) {
-	c.JSON(http.StatusOK, Response{StatusCode: 0})
-	//toUserId := c.Query("to_user_id")
-	//
-	//if userid, exist := c.Get("uid"); exist {
-	//	userIdB, _ := strconv.Atoi(toUserId)
-	//	uid := userid.(int64)
-	//	chatKey := genChatKey(uid, int64(userIdB))
-	//
-	//	c.JSON(http.StatusOK, ChatResponse{Response: Response{StatusCode: 0}, MessageList: tempChat[chatKey]})
-	//} else {
-	//	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
-	//}
+	toUid := c.Query("to_user_id")
+
+	if userid, exist := c.Get("uid"); exist {
+		uid := userid.(int64)
+		to_uid, _ := strconv.ParseInt(toUid, 10, 64)
+
+		massagelist, _ := service.QuaryMassageList(uid, to_uid)
+		//fmt.Println("****")
+		//fmt.Println(uid, to_uid)
+		//for i := range massagelist.Massages {
+		//	fmt.Println(massagelist.Massages[i])
+		//}
+
+		c.JSON(http.StatusOK, ChatResponse{
+			Response:    Response{StatusCode: 0},
+			MessageList: massagelist.Massages,
+		})
+
+	} else {
+		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	}
+
 }
 
 func genChatKey(userIdA int64, userIdB int64) string {

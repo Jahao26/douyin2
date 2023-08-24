@@ -39,13 +39,7 @@ func FollowList(c *gin.Context) {
 	uid := userid.(int64)
 	_, err := service.UserInfo(uid)
 	if err != nil {
-		c.JSON(http.StatusOK, VideoListResponse{
-			Response: Response{
-				StatusCode: 1,
-				StatusMsg:  "User not exist",
-			},
-			VideoList: []*service.VideoResponse{},
-		})
+		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
 	}
 	// 通过uid获得当前用户的关注列表
 	userlist, err := service.FollowList(uid)
@@ -68,13 +62,7 @@ func FollowerList(c *gin.Context) {
 	uid := userid.(int64)
 	_, err := service.UserInfo(uid)
 	if err != nil {
-		c.JSON(http.StatusOK, VideoListResponse{
-			Response: Response{
-				StatusCode: 1,
-				StatusMsg:  "User not exist",
-			},
-			VideoList: []*service.VideoResponse{},
-		})
+		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
 	}
 	// 通过uid获得当前用户的关注列表
 	userlist, err := service.FollowerList(uid)
@@ -90,10 +78,22 @@ func FollowerList(c *gin.Context) {
 // FriendList all users have same friend list
 // demand：如果用户互关，他们就是朋友，展示朋友列表
 func FriendList(c *gin.Context) {
+	userid, exist := c.Get("uid")
+	if !exist {
+		return
+	}
+	uid := userid.(int64)
+	_, err := service.UserInfo(uid)
+	if err != nil {
+		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	}
+	// 通过uid获得当前用户的朋友列表
+	userlist, err := service.FriendList(uid)
+
 	c.JSON(http.StatusOK, UserListResponse{
 		Response: Response{
 			StatusCode: 0,
 		},
-		UserList: nil,
+		UserList: userlist.Users,
 	})
 }

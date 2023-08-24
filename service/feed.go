@@ -60,7 +60,7 @@ func (q *FeedVideoListFlow) prepareData() error {
 	var is_fav bool
 
 	for i := range q.videos {
-		is_fav, err = repository.NewFavoriteDao().QueryUidVid(q.uid, q.videos[i].Id)
+		is_fav, _ = repository.NewFavoriteDao().QueryUidVid(q.uid, q.videos[i].Id)
 		// 通过保存的视频的UID找到作者信息，返回给feed列表
 		author, _ := UserInfo(q.videos[i].Uid)
 		is_rala, _ := repository.NewRalationDao().QuaryRalation(q.uid, author.Id)
@@ -81,6 +81,7 @@ func (q *FeedVideoListFlow) prepareData() error {
 	}
 	q.videoList = &List{Videos: newvideolist}
 	//每次加载完视频都会默认看完了这些视频
+
 	if err := repository.StoreVidIntoRedis(q.uid, vidList); err != nil {
 		fmt.Println("Error in Add vid into Redis")
 	}

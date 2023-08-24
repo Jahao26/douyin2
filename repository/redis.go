@@ -11,6 +11,7 @@ import (
 var rdb0 *redis.Client // 操作用户数据
 var rdb1 *redis.Client // 存储视频数据
 var rdb2 *redis.Client //
+var rdb3 *redis.Client // 存储关注、粉丝、好友列表
 
 func InitRedis() error {
 	// rdb0存放用户基本信息
@@ -30,6 +31,12 @@ func InitRedis() error {
 		Addr:     "60.204.170.108:6379",
 		Password: "",
 		DB:       2,
+	})
+	// rdb3存放用户关注、粉丝、好友信息
+	rdb3 = redis.NewClient(&redis.Options{
+		Addr:     "60.204.170.108:6379",
+		Password: "",
+		DB:       3,
 	})
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

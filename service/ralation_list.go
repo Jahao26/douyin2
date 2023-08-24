@@ -2,6 +2,7 @@ package service
 
 import (
 	"douyin/repository"
+	"strconv"
 )
 
 // userList 视频集合
@@ -59,6 +60,8 @@ func (q *RalationListFlow) followPackdata() error {
 	return nil
 }
 
+// 粉丝列表
+
 func FollowerList(uid int64) (*userList, error) {
 	return NewFollowerList(uid).Do()
 }
@@ -103,5 +106,62 @@ func (q *RalationListFlow) packData() error {
 		newFollowerList = append(newFollowerList, to_userinfo)
 	}
 	q.userlist = &userList{newFollowerList}
+	return nil
+}
+
+// 朋友列表
+
+func FriendList(uid int64) (*userList, error) {
+	return NewFriendList(uid).friendDo()
+}
+
+func NewFriendList(uid int64) *RalationListFlow {
+	return &RalationListFlow{uid: uid}
+}
+
+func (q *RalationListFlow) friendDo() (*userList, error) {
+	if err := q.friendcheckNum(); err != nil {
+		return nil, err
+	}
+	if err := q.friendpackData(); err != nil {
+		return nil, err
+	}
+	return q.userlist, nil
+}
+
+func (q *RalationListFlow) friendcheckNum() error {
+	//检查userId是否存在
+	if _, err := repository.GetUsr_redis(q.uid); err != nil {
+		if _, err = repository.NewUserDao().QueryById(q.uid); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (q *RalationListFlow) friendpackData() error {
+	// 通过uid获得朋友用户的信息列表
+	// 1. 先判断redis中是否存在相关数据。(先不考虑关没关注)
+	// 2. 若存在，则直接从redis中拉出来初始状态的朋友列表
+	// 3. 若不存在，则从mysql中拉出来初始状态的朋友列表
+	// 4. 对朋友列表补充关注信息。
+
+	friList, err := repository.GetFriend(q.uid)
+
+	if err != nil {
+		return err
+	}
+
+	var newFriendList []*UserInfoPage
+	for _, Friend := range friList { //获取关注列表里的信息用于返回
+		Uid, _ := strconv.ParseInt(Friend, 10, 64)
+		to_userinfo, _ := UserInfo(Uid)
+		//查询关注与被关注的信息,改变显示的布尔值
+		//change, _ := repository.NewRalationDao().QuaryRalation(q.uid, to_userinfo.Id)
+		//to_userinfo.IsFollow = change
+
+		newFriendList = append(newFriendList, to_userinfo)
+	}
+	q.userlist = &userList{newFriendList}
 	return nil
 }

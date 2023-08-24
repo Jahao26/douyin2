@@ -16,7 +16,6 @@ func Automiddleware() gin.HandlerFunc {
 			//c.Abort() // 确保这个请求的其他函数不会被调用，例如router中的第二个handlefunc
 			return
 		}
-
 		c.Set("uid", claim.UserId)
 		c.Next()
 	}

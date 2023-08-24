@@ -23,6 +23,16 @@ func NewRalationDao() *RalationDAO {
 
 // 增加关注与被关注的关系
 func (*RalationDAO) AddRalation(uid int64, to_uid int64) error {
+	// 先添加对应关注信息到redis里，再存到mysql上。后续可通过消息队列优化，下同。
+	err := StoreFollow(uid, to_uid)
+	if err != nil {
+		return err
+	}
+	err = StoreFollower(to_uid, uid)
+	if err != nil {
+		return err
+	}
+
 	newRala := Ralation{
 		Uid:   uid,
 		ToUid: to_uid,
@@ -35,6 +45,15 @@ func (*RalationDAO) AddRalation(uid int64, to_uid int64) error {
 
 // 删除关注与被关注的关系
 func (*RalationDAO) RmRalation(uid int64, to_uid int64) error {
+	err := RmFollow(uid, to_uid)
+	if err != nil {
+		return err
+	}
+	err = RmFollower(to_uid, uid)
+	if err != nil {
+		return err
+	}
+
 	var ralation Ralation
 	if err := db.Where("uid=?", uid).Where("to_uid", to_uid).Delete(&ralation).Error; err != nil {
 		return err
