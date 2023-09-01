@@ -6,12 +6,10 @@ import (
 	"time"
 )
 
-// 存关注信息
+// 存uid关注信息
 func StoreFollow(uid int64, to_uid int64) error {
 	FollowKey := fmt.Sprintf("following:%d", uid)
 	Follow := strconv.FormatInt(to_uid, 10)
-	fmt.Println("*********")
-	fmt.Println(FollowKey, Follow)
 	err := rdb3.SAdd(c, FollowKey, Follow).Err()
 	return err
 }
@@ -35,7 +33,7 @@ func GetFollow(uid int64) ([]string, error) {
 	return followlist, err
 }
 
-// 存粉丝信息
+// 存uid粉丝信息
 func StoreFollower(uid int64, to_uid int64) error {
 	FollowerKey := fmt.Sprintf("follower:%d", uid)
 	Follower := strconv.FormatInt(to_uid, 10)

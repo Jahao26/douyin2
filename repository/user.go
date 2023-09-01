@@ -60,8 +60,9 @@ func (*UserDAO) QueryById(id int64) (*User, error) {
 	return &user, nil
 }
 
+// 根据ID增加关注数量
 func (*UserDAO) AddFollow(id int64) error {
-	// 根据ID添加关注
+
 	err := db.Model(&User{}).Where("id=?", id).UpdateColumn("follow_count", gorm.Expr("follow_count+?", 1)).Error
 	if err != nil {
 		//panic(err)
@@ -79,6 +80,7 @@ func (*UserDAO) RmFollow(id int64) error {
 	return nil
 }
 
+// 根据ID增加粉丝数量
 func (*UserDAO) AddFollower(id int64) error {
 	err := db.Model(&User{}).Where("id=?", id).UpdateColumn("follower_count", gorm.Expr("follower_count+?", 1)).Error
 	if err != nil {

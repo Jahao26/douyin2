@@ -65,3 +65,11 @@ func (*FavoriteDAO) GetFavoriteByUid(uid int64) (*[]Favorite, error) {
 	}
 	return &favList, nil
 }
+
+func (*FavoriteDAO) CountFavoriteByVid(vid int64) (int64, error) {
+	var count int64
+	if err := db.Model(&Favorite{}).Where("vid=?", vid).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
+}

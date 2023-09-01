@@ -37,18 +37,10 @@ func (f *InfoFlow) Do() (*UserInfoPage, error) {
 }
 
 func (f *InfoFlow) userInfo() (*UserInfoPage, error) {
-	// Get Userinfo from Redis
-	user, err := repository.GetUsr_redis(f.uid)
+	// 此处需要用redis更新数据库的followcount和followercount
+	user, err := repository.NewUserDao().QueryById(f.uid)
 	if err != nil {
-		// if userinfo we are looking for is not exist in REDIS
-		// get info from MYSQL database
-		user, err = repository.NewUserDao().QueryById(f.uid)
-		if err != nil {
-			return nil, err
-		}
-		if err = repository.AddUsrInfo_redis(user); err != nil {
-			return nil, err
-		}
+		return nil, err
 	}
 	newInfoPage := UserInfoPage{
 		Id:            user.Id,

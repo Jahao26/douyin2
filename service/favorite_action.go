@@ -1,8 +1,6 @@
 package service
 
-import (
-	"douyin/repository"
-)
+import "douyin/repository"
 
 type favoriteFlow struct {
 	uid         int64
@@ -28,34 +26,47 @@ func (f *favoriteFlow) Do() error {
 
 func (f *favoriteFlow) favoriteAction() error {
 	if f.action_type == "1" { // 如果操作类型是 点赞
-		// video中的赞数量+1
-		err := repository.NewVideoDao().AddVideoFavorite(f.vid) // 通过视频查询到video类
-		if err != nil {
+		if err := repository.FavoriteUser(f.vid); err != nil {
 			return err
 		}
-		err = repository.NewFavoriteDao().AddFavorite(f.uid, f.vid)
-		if err != nil {
-			return err
-		}
-		// 用户喜欢数量加1
-		err = repository.NewUserDao().AddfavoriteCount(f.uid)
-		if err != nil {
-			return err
-		}
-
 	} else { // 如果操作类型是 取消点赞
-		err := repository.NewVideoDao().RmVideoFavorite(f.uid, f.vid) // 通过视频查询到video类
-		if err != nil {
-			return err
-		}
-		err = repository.NewFavoriteDao().RmFavorite(f.uid, f.vid)
-		if err != nil {
-			return err
-		}
-		err = repository.NewUserDao().RmfavoriteCount(f.uid)
-		if err != nil {
+		if err := repository.UnFavoriteUser(f.vid); err != nil {
 			return err
 		}
 	}
+	if err := repository.SendFavoroteEventToKafka(f.uid, f.vid, f.action_type); err != nil {
+		return err
+	}
 	return nil
 }
+
+//if f.action_type == "1" { // 如果操作类型是 点赞
+//// video中的赞数量+1
+//err := repository.NewVideoDao().AddVideoFavorite(f.vid) // 通过视频查询到video类
+//if err != nil {
+//return err
+//}
+//err = repository.NewFavoriteDao().AddFavorite(f.uid, f.vid)
+//if err != nil {
+//return err
+//}
+//// 用户喜欢数量加1
+//err = repository.NewUserDao().AddfavoriteCount(f.uid)
+//if err != nil {
+//return err
+//}
+//
+//} else { // 如果操作类型是 取消点赞
+//err := repository.NewVideoDao().RmVideoFavorite(f.uid, f.vid) // 通过视频查询到video类
+//if err != nil {
+//return err
+//}
+//err = repository.NewFavoriteDao().RmFavorite(f.uid, f.vid)
+//if err != nil {
+//return err
+//}
+//err = repository.NewUserDao().RmfavoriteCount(f.uid)
+//if err != nil {
+//return err
+//}
+//}

@@ -49,21 +49,29 @@ func (q *FeedVideoListFlow) prepareData() error {
 		return err
 	}
 
-	err := repository.NewVideoDao().GetVideoByLimit(MaxVideoNum, &q.videos)
-	if err != nil {
-		return err
+	if len(q.videos) == 0 {
+		err := repository.NewVideoDao().GetVideoByLimit(MaxVideoNum, &q.videos)
+		if err != nil {
+			return err
+		}
 	}
 
 	//创建一个新的视频列表，长度和查询到的视频列表一致，用来返回给前端
 	newvideolist := make([]*VideoResponse, len(q.videos))
 	var vidList []int64
-	var is_fav bool
+	var is_rala bool
 
 	for i := range q.videos {
-		is_fav, _ = repository.NewFavoriteDao().QueryUidVid(q.uid, q.videos[i].Id)
 		// 通过保存的视频的UID找到作者信息，返回给feed列表
 		author, _ := UserInfo(q.videos[i].Uid)
-		is_rala, _ := repository.NewRalationDao().QuaryRalation(q.uid, author.Id)
+		fmt.Println("UID AND UUID: %d %d", q.uid, author.Id)
+		if q.uid == author.Id {
+			is_rala = true
+		} else {
+			is_rala, _ = repository.NewRalationDao().QueryRalation(q.uid, author.Id)
+		}
+		is_fav, _ := repository.NewFavoriteDao().QueryUidVid(q.uid, author.Id)
+		favoriteCount, _ := repository.FavoriteCountByVid(q.videos[i].Id)
 
 		author.IsFollow = is_rala
 
@@ -73,7 +81,7 @@ func (q *FeedVideoListFlow) prepareData() error {
 			CommentCount:  q.videos[i].CommentCount,
 			PlayUrl:       q.videos[i].PlayUrl,
 			CoverUrl:      q.videos[i].CoverUrl,
-			FavoriteCount: q.videos[i].FavoriteCount,
+			FavoriteCount: favoriteCount,
 			IsFavorite:    is_fav,
 		}
 		newvideolist[i] = &newResponse

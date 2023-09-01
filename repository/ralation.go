@@ -23,16 +23,6 @@ func NewRalationDao() *RalationDAO {
 
 // 增加关注与被关注的关系
 func (*RalationDAO) AddRalation(uid int64, to_uid int64) error {
-	// 先添加对应关注信息到redis里，再存到mysql上。后续可通过消息队列优化，下同。
-	err := StoreFollow(uid, to_uid)
-	if err != nil {
-		return err
-	}
-	err = StoreFollower(to_uid, uid)
-	if err != nil {
-		return err
-	}
-
 	newRala := Ralation{
 		Uid:   uid,
 		ToUid: to_uid,
@@ -62,7 +52,7 @@ func (*RalationDAO) RmRalation(uid int64, to_uid int64) error {
 }
 
 // 查看关注关系
-func (*RalationDAO) QuaryRalation(uid int64, to_uid int64) (bool, error) {
+func (*RalationDAO) QueryRalation(uid int64, to_uid int64) (bool, error) {
 	var rala Ralation
 	err := db.Model(&Ralation{}).Where("uid=?", uid).Where("to_uid", to_uid).Find(&rala).Error
 	if err != nil {
@@ -75,7 +65,7 @@ func (*RalationDAO) QuaryRalation(uid int64, to_uid int64) (bool, error) {
 }
 
 // 查询当前用户的关注列表
-func (*RalationDAO) QuaryFollow(uid int64) (*[]Ralation, error) {
+func (*RalationDAO) QueryFollow(uid int64) (*[]Ralation, error) {
 	var followList []Ralation
 	err := db.Model(&Ralation{}).Where("uid", uid).Find(&followList).Error
 	if err != nil {
@@ -85,7 +75,7 @@ func (*RalationDAO) QuaryFollow(uid int64) (*[]Ralation, error) {
 }
 
 // 查询当前用户的粉丝列表
-func (*RalationDAO) QuaryFollower(uid int64) (*[]Ralation, error) {
+func (*RalationDAO) QueryFollower(uid int64) (*[]Ralation, error) {
 	var followerList []Ralation
 	err := db.Model(&Ralation{}).Where("to_uid", uid).Find(&followerList).Error
 	if err != nil {

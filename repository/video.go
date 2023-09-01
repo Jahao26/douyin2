@@ -74,7 +74,7 @@ func (*VideoDAO) AddVideoFavorite(vid int64) error { // 在增加视频喜欢的
 	return nil
 }
 
-func (*VideoDAO) RmVideoFavorite(uid int64, vid int64) error {
+func (*VideoDAO) RmVideoFavorite(vid int64) error {
 	db.Model(&Video{}).Where("id=?", vid).UpdateColumn("favorite_count", gorm.Expr("favorite_count-?", 1))
 	//db.Model(&Video{}).Where("id=?", vid).Where("uid=?", uid).Update("is_favorite", false)
 	return nil

@@ -46,7 +46,7 @@ func (q *RalationListFlow) followChecknum() error {
 
 func (q *RalationListFlow) followPackdata() error {
 	// 通过uid获得关注用户的信息列表
-	folList, err := repository.NewRalationDao().QuaryFollow(q.uid)
+	folList, err := repository.NewRalationDao().QueryFollow(q.uid)
 	if err != nil {
 		return err
 	}
@@ -92,7 +92,7 @@ func (q *RalationListFlow) checkNum() error {
 
 func (q *RalationListFlow) packData() error {
 	// 通过uid获得粉丝用户的信息列表
-	folList, err := repository.NewRalationDao().QuaryFollower(q.uid)
+	folList, err := repository.NewRalationDao().QueryFollower(q.uid)
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func (q *RalationListFlow) packData() error {
 	for _, follower := range *folList { //获取关注列表里的信息用于返回
 		to_userinfo, _ := UserInfo(follower.Uid)
 		//查询关注与被关注的信息,改变显示的布尔值
-		change, _ := repository.NewRalationDao().QuaryRalation(q.uid, to_userinfo.Id)
+		change, _ := repository.NewRalationDao().QueryRalation(q.uid, to_userinfo.Id)
 		to_userinfo.IsFollow = change
 
 		newFollowerList = append(newFollowerList, to_userinfo)
@@ -147,7 +147,6 @@ func (q *RalationListFlow) friendpackData() error {
 	// 4. 对朋友列表补充关注信息。
 
 	friList, err := repository.GetFriend(q.uid)
-
 	if err != nil {
 		return err
 	}

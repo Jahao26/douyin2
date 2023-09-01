@@ -12,9 +12,10 @@ var rdb0 *redis.Client // 操作用户数据
 var rdb1 *redis.Client // 存储视频数据
 var rdb2 *redis.Client //
 var rdb3 *redis.Client // 存储关注、粉丝、好友列表
+var rdb4 *redis.Client // 存储喜欢的视频号
 
 func InitRedis() error {
-	// rdb0存放用户基本信息
+	// rdb0存放用户基本信息，已弃用
 	rdb0 = redis.NewClient(&redis.Options{
 		Addr:     "60.204.170.108:6379",
 		Password: "",
@@ -37,6 +38,12 @@ func InitRedis() error {
 		Addr:     "60.204.170.108:6379",
 		Password: "",
 		DB:       3,
+	})
+	// rdb4存放用户喜欢的VID
+	rdb4 = redis.NewClient(&redis.Options{
+		Addr:     "60.204.170.108:6379",
+		Password: "",
+		DB:       4,
 	})
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
