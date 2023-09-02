@@ -146,8 +146,5 @@ func updateMySQL(event InteractiveEvent) error {
 			}
 		}
 	}
-	fmt.Println("***************************************************")
-	fmt.Println("Successful Consume!!!")
-	fmt.Println("***************************************************")
 	return nil
 }

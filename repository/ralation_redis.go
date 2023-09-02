@@ -66,6 +66,23 @@ func GetFriend(uid int64) ([]string, error) {
 	FollowKey := fmt.Sprintf("following:%d", uid)
 	FollowerKey := fmt.Sprintf("follower:%d", uid)
 
+	exists, err := rdb3.Exists(c, FollowKey, FollowerKey).Result()
+	if err != nil {
+		fmt.Println("Error checking friendList existence...")
+		return nil, err
+	}
+	if exists != 1 { //不存在键
+		// 先从数据库中取出朋友列表，再将他缓存在redis中
+		// 方式1，如果我目前的联合查询有用，那么要在redis里存following和follower两个键值对要怎么存。
+		// 方式2: 如果我直接用查询关注和查询粉丝的操作获得数据库中的两个列表，转存redis只能通过for进行遍历。
+		
+		friendlist, err := NewRalationDao().QueryFriend(uid)
+		if err != nil {
+			return nil, err
+		}
+
+	}
+
 	UserId := fmt.Sprintf("user:%d", uid)
 	//pipe := rdb3.TxPipeline()
 	//friendlist, err := pipe.SInter(c, FollowKey, FollowerKey).Result()
@@ -73,7 +90,7 @@ func GetFriend(uid int64) ([]string, error) {
 	//pipe.Set(c, UserId, 0, 1*time.Minute)
 	//_, err = pipe.Exec(c)
 	friendlist, err := rdb3.SInter(c, FollowKey, FollowerKey).Result()
-	rdb3.Set(c, UserId, 0, 1*time.Minute)
+	rdb3.Set(c, UserId, 0, 1*time.Minute) //设置聊天时间戳
 	if err != nil {
 		return nil, err
 	}

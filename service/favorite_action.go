@@ -1,6 +1,9 @@
 package service
 
-import "douyin/repository"
+import (
+	"douyin/repository"
+	"fmt"
+)
 
 type favoriteFlow struct {
 	uid         int64
@@ -26,17 +29,26 @@ func (f *favoriteFlow) Do() error {
 
 func (f *favoriteFlow) favoriteAction() error {
 	if f.action_type == "1" { // 如果操作类型是 点赞
-		if err := repository.FavoriteUser(f.vid); err != nil {
-			return err
-		}
+		go func() {
+			if err := repository.FavoriteUser(f.vid); err != nil {
+				fmt.Println("Error in Favorite:", err)
+			}
+		}()
+
 	} else { // 如果操作类型是 取消点赞
-		if err := repository.UnFavoriteUser(f.vid); err != nil {
-			return err
+		go func() {
+			if err := repository.UnFavoriteUser(f.vid); err != nil {
+				fmt.Println("Error in UnFavorite:", err)
+			}
+		}()
+
+	}
+	go func() {
+		if err := repository.SendFavoroteEventToKafka(f.uid, f.vid, f.action_type); err != nil {
+			fmt.Println("Error in SendToKafka:", err)
 		}
-	}
-	if err := repository.SendFavoroteEventToKafka(f.uid, f.vid, f.action_type); err != nil {
-		return err
-	}
+	}()
+
 	return nil
 }
 

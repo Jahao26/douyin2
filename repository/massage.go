@@ -45,15 +45,14 @@ func (m *MassageDAO) QuaryMassage(uid int64, to_uid int64, massageList *[]*Massa
 	s, _ := rdb3.Get(c, UserId).Result()
 
 	timestamp, _ = strconv.ParseInt(s, 10, 64)
-	fmt.Println("redis in time:", timestamp)
 	err := db.Model(&Massage{}).Where("create_time>?", timestamp).Where("(uid=? AND to_uid =?) OR (uid=? AND to_uid =?)", uid, to_uid, to_uid, uid).Find(&massageList).Error
 	if err != nil {
 		return err
 	}
 	err = db.Model(&Massage{}).Select("MAX(create_time)").Scan(&timestamp).Error
-	fmt.Println("in time:", timestamp)
+	//fmt.Println("in time:", timestamp)
 	rdb3.Del(c, UserId)
-	rdb3.Set(c, UserId, timestamp, 1*time.Minute)
+	rdb3.Set(c, UserId, timestamp+2, 1*time.Minute)
 
 	return nil
 }

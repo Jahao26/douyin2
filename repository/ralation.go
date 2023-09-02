@@ -1,6 +1,9 @@
 package repository
 
-import "sync"
+import (
+	"fmt"
+	"sync"
+)
 
 type Ralation struct {
 	Uid   int64 `gorm:"column:uid;not null" redis:"uid"`
@@ -82,4 +85,15 @@ func (*RalationDAO) QueryFollower(uid int64) (*[]Ralation, error) {
 		return nil, err
 	}
 	return &followerList, err
+}
+
+// 取朋友列表
+func (*RalationDAO) QueryFriend(uid int64) (*[]Ralation, error) {
+	var friendList []Ralation
+	err := db.Model(&Ralation{}).Where("to_uid=?", uid).Joins("INNER JOIN Ralation AS B ON Ralation.uid = B.to_uid").Find(&friendList).Error
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("Friend: ", friendList[0].ToUid, friendList[0].ToUid)
+	return &friendList, err
 }

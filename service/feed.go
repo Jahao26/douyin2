@@ -70,7 +70,7 @@ func (q *FeedVideoListFlow) prepareData() error {
 		} else {
 			is_rala, _ = repository.NewRalationDao().QueryRalation(q.uid, author.Id)
 		}
-		is_fav, _ := repository.NewFavoriteDao().QueryUidVid(q.uid, author.Id)
+		is_fav, _ := repository.NewFavoriteDao().QueryUidVid(q.uid, q.videos[i].Id)
 		favoriteCount, _ := repository.FavoriteCountByVid(q.videos[i].Id)
 
 		author.IsFollow = is_rala
