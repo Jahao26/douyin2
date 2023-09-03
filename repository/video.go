@@ -11,7 +11,7 @@ import (
 
 type Video struct {
 	Id            int64  `gorm:"column:id;primary_key;AUTO_INCREMENT" redis:"id"`
-	Uid           int64  `gorm:"column:uid;not null" redis:"uid"`
+	Uid           int64  `gorm:"column:uid;not null;index" redis:"uid"`
 	PlayUrl       string `gorm:"column:playurl;type:varchar(255);not null" redis:"playurl"`
 	CoverUrl      string `gorm:"column:coverurl;type:varchar(255);not null" redis:"coverurl"`
 	FavoriteCount int64  `gorm:"column:favorite_count;not null" redis:"favorite_count"`

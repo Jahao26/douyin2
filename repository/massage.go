@@ -1,10 +1,7 @@
 package repository
 
 import (
-	"fmt"
-	"strconv"
 	"sync"
-	"time"
 )
 
 type Massage struct {
@@ -38,21 +35,13 @@ func (m *MassageDAO) AddMassage(massage *Massage) error {
 }
 
 // 通过uid和to_uid获取消息记录
-func (m *MassageDAO) QuaryMassage(uid int64, to_uid int64, massageList *[]*Massage) error {
-	var timestamp int64
-	UserId := fmt.Sprintf("user:%d", uid)
+func (m *MassageDAO) QuaryMassage(uid int64, to_uid int64, timestamp int64, massageList *[]*Massage) (int64, error) {
 
-	s, _ := rdb3.Get(c, UserId).Result()
-
-	timestamp, _ = strconv.ParseInt(s, 10, 64)
 	err := db.Model(&Massage{}).Where("create_time>?", timestamp).Where("(uid=? AND to_uid =?) OR (uid=? AND to_uid =?)", uid, to_uid, to_uid, uid).Find(&massageList).Error
 	if err != nil {
-		return err
+		return 0, err
 	}
 	err = db.Model(&Massage{}).Select("MAX(create_time)").Scan(&timestamp).Error
-	//fmt.Println("in time:", timestamp)
-	rdb3.Del(c, UserId)
-	rdb3.Set(c, UserId, timestamp+2, 1*time.Minute)
 
-	return nil
+	return timestamp, nil
 }

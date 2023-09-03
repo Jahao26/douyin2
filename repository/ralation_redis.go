@@ -66,7 +66,7 @@ func GetFriend(uid int64) ([]string, error) {
 	FollowKey := fmt.Sprintf("following:%d", uid)
 	FollowerKey := fmt.Sprintf("follower:%d", uid)
 
-	exists, err := rdb3.Exists(c, FollowKey, FollowerKey).Result()
+	exists, err := rdb3.Exists(c, FollowKey).Result()
 	if err != nil {
 		fmt.Println("Error checking friendList existence...")
 		return nil, err
@@ -75,22 +75,30 @@ func GetFriend(uid int64) ([]string, error) {
 		// 先从数据库中取出朋友列表，再将他缓存在redis中
 		// 方式1，如果我目前的联合查询有用，那么要在redis里存following和follower两个键值对要怎么存。
 		// 方式2: 如果我直接用查询关注和查询粉丝的操作获得数据库中的两个列表，转存redis只能通过for进行遍历。
-		
-		friendlist, err := NewRalationDao().QueryFriend(uid)
-		if err != nil {
-			return nil, err
+		fmt.Println("reload friend list!!!")
+		followerlist, _ := NewRalationDao().QueryFollow(uid)
+		for _, follower := range *followerlist {
+			// 遍历关注者列表，挨个存入redis
+			err = StoreFollow(uid, follower.ToUid)
 		}
-
+		followinglist, _ := NewRalationDao().QueryFollower(uid)
+		for _, following := range *followinglist {
+			// 遍历粉丝列表，存入redis
+			// 由于mysql查粉丝列表时，当前用户uid作为to_uid进行查询，因此存redis时用的是Uid
+			err = StoreFollower(uid, following.Uid)
+		}
 	}
 
 	UserId := fmt.Sprintf("user:%d", uid)
+	Usertime := fmt.Sprintf("usertime:%d", uid)
 	//pipe := rdb3.TxPipeline()
 	//friendlist, err := pipe.SInter(c, FollowKey, FollowerKey).Result()
 	//fmt.Println("redis friendlist:", friendlist)
 	//pipe.Set(c, UserId, 0, 1*time.Minute)
 	//_, err = pipe.Exec(c)
 	friendlist, err := rdb3.SInter(c, FollowKey, FollowerKey).Result()
-	rdb3.Set(c, UserId, 0, 1*time.Minute) //设置聊天时间戳
+	rdb3.Set(c, UserId, 0, 1*time.Minute)                   //设置聊天时间戳
+	rdb3.Set(c, Usertime, time.Now().Unix(), 1*time.Minute) //设置聊天时间戳
 	if err != nil {
 		return nil, err
 	}
