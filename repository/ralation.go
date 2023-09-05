@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"sync"
 )
 
@@ -38,15 +37,6 @@ func (*RalationDAO) AddRalation(uid int64, to_uid int64) error {
 
 // 删除关注与被关注的关系
 func (*RalationDAO) RmRalation(uid int64, to_uid int64) error {
-	err := RmFollow(uid, to_uid)
-	if err != nil {
-		return err
-	}
-	err = RmFollower(to_uid, uid)
-	if err != nil {
-		return err
-	}
-
 	var ralation Ralation
 	if err := db.Where("uid=?", uid).Where("to_uid", to_uid).Delete(&ralation).Error; err != nil {
 		return err
@@ -94,6 +84,6 @@ func (*RalationDAO) QueryFriend(uid int64) (*[]Ralation, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("Friend: ", friendList[0].ToUid, friendList[0].ToUid)
+	//fmt.Println("Friend: ", friendList[0].ToUid, friendList[0].ToUid)
 	return &friendList, err
 }

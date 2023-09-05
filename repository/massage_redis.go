@@ -13,14 +13,14 @@ func GetMassage(uid int64, to_uid int64, massageList *[]*Massage) error {
 	//pipe := rdb3.TxPipeline()
 	exist, _ := rdb3.Exists(c, UserId).Result()
 	if exist != 1 {
-		fmt.Println("reset time:", timestamp)
+		//fmt.Println("reset time:", timestamp)
 		rdb3.Set(c, UserId, 0, 1*time.Minute) //设置聊天时间戳
 	}
 	s, _ := rdb3.Get(c, UserId).Result()
 	timestamp, _ = strconv.ParseInt(s, 10, 64)
-	fmt.Println("before time:", timestamp)
+	//fmt.Println("before time:", timestamp)
 	timestamp, err := NewMassageDAO().QuaryMassage(uid, to_uid, timestamp, massageList)
-	fmt.Println("after time:", timestamp)
+	//fmt.Println("after time:", timestamp)
 	if err != nil {
 		return err
 	}

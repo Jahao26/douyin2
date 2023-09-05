@@ -52,7 +52,7 @@ func (q *QuaryMassageListFlow) packData() error {
 
 	for i := range q.massages {
 		if q.massages[i].CreateTime >= lastime && q.uid == q.massages[i].Uid {
-			fmt.Println("pass new", len(q.massages))
+			//fmt.Println("pass new", len(q.massages))
 			newMassagelist[i] = &NewMassage{}
 		} else {
 			newmassage := NewMassage{

@@ -64,7 +64,7 @@ func (q *FeedVideoListFlow) prepareData() error {
 	for i := range q.videos {
 		// 通过保存的视频的UID找到作者信息，返回给feed列表
 		author, _ := UserInfo(q.videos[i].Uid)
-		fmt.Println("UID AND UUID: %d %d", q.uid, author.Id)
+		//fmt.Println("UID AND UUID: %d %d", q.uid, author.Id)
 		if q.uid == author.Id {
 			is_rala = true
 		} else {
